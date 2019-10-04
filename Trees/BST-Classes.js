@@ -74,8 +74,53 @@ class BinarySearchTree {
         inOrder(this.root);
         return visited; 
     }
-}
 
+    createMinTree(numbers, lo, hi) {
+        let mid; 
+        let visited = {}; 
+        //Find mid of array
+        mid = (lo + hi) / 2; 
+        //create BST to pass to functions
+        var minTree = new BinarySearchTree(); 
+        minTree.root = new Node(mid); 
+        //set root as visited in the dict for visited nodes 
+        visited[mid] = numbers[mid]; 
+        //call helper function left, right
+        this.addNode(numbers, lo, mid, visited, minTree.root);
+        this.addNode(numbers, mid+1, hi, visited, minTree.root); 
+
+        return minTree; 
+    }
+
+    addNode(numbers, lo, hi, visited, parentNode) {
+
+        //base case to stop the iterations
+        if(lo === hi) {
+            return; 
+        }
+
+        
+        let mid = (lo + hi) / 2; 
+        //add the mid of current slice to the mintree
+        if(numbers[mid] < parentNode.value && !(visited[numbers[mid]])) {
+            parentNode.left = new Node(numbers[mid]); 
+            visited[numbers[mid]] = true; 
+        } else { //when the number is greater than the parent node 
+            if(!visited[numbers[mid]]) {
+                parentNode.right = new Node(numbers[mid]);
+                visited[numbers[mid]] = true; 
+            }
+        }
+
+        this.addNode(numbers, lo, mid, visited, parentNode.left);
+        this.addNode(numbers, mid+1, hi, visited, parentNode.right);
+
+    }
+
+    
+
+}
+/*
 var tree = new BinarySearchTree();
 tree.root = new Node(10);
 tree.root.right = new Node(15);
@@ -93,3 +138,12 @@ console.log(`DFSPostOrder: ${visitedPost}.`);
 
 var visitedInOrder = tree.DFSInOrder();
 console.log(`DFSInOrder: ${visitedInOrder}.`);
+*/
+
+var numList = [10,14,18,28,30,34,38,40];
+var bst = new BinarySearchTree();
+var BST = bst.createMinTree(numList, 0, numList.length); 
+console.log(BST); 
+
+
+
