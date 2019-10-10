@@ -43,24 +43,27 @@ class MaxBinaryHeap {
     max = this.values.pop();
 
     parent = 0;
-    child = parent * 2 + 1;
+    child = (parent * 2) + 1;
     //sinkdown logic
     while (
-      this.values[child] !== null &&
-      this.values[child] > this.values[parent]
+      child < this.values.length
     ) {
       //compare the value of the children to find the greater element
-      if (this.values[child + 1] !== null) {
+      if (child + 1 < this.values.length) {
         if (this.values[child] < this.values[child + 1]) {
           child = child + 1; //set to right child
         }
       }
 
-      //swap the parent with the child
-      temp = this.values[parent];
-      this.values[parent] = this.values[child];
-      this.values[child] = temp;
-
+      if(this.values[child] > this.values[parent]) {
+        //swap the parent with the child
+        temp = this.values[parent];
+        this.values[parent] = this.values[child];
+        this.values[child] = temp;
+      } else {
+        break; 
+      }
+      
       //update the parent and the child index
       parent = child;
       child = child * 2 + 1;

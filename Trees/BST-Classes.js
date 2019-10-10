@@ -69,6 +69,7 @@ class BinarySearchTree {
     return visited;
   }
 
+  //my solution
   createMinTree(numbers, lo, hi) {
     let mid;
     let visited = {};
@@ -112,6 +113,23 @@ class BinarySearchTree {
     this.addNode(numbers, lo, mid, visited, parentNode);
     this.addNode(numbers, mid + 1, hi, visited, parentNode);
   }
+
+  //book solution
+  createMinBST(arr) {
+    return this.createMinBSTCall(arr, 0, arr.length - 1); 
+    }
+  
+
+  createMinBSTCall(arr, start, end) {
+    if (end < start) {
+      return null; 
+    }
+    let mid = Math.floor ( (start + end) / 2) ; 
+    let n = new Node(arr[mid]); 
+    n.left = this.createMinBSTCall(arr, start, mid - 1); 
+    n.right = this.createMinBSTCall(arr, mid + 1, end); 
+    return n; 
+  }
 }
 /*
 var tree = new BinarySearchTree();
@@ -136,5 +154,6 @@ console.log(`DFSInOrder: ${visitedInOrder}.`);
 var numList = [10, 14, 18, 28, 30, 34, 38, 40];
 var bst = new BinarySearchTree();
 var BST = bst.createMinTree(numList, 0, numList.length);
-//console.log(BST);
-j;
+var BSTBook = new BinarySearchTree();
+console.log(BST);
+console.log(BSTBook.createMinBST(numList)); 
