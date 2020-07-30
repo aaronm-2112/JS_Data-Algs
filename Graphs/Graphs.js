@@ -176,6 +176,33 @@ class UndirectedGraph extends Graph {
 
     return result;
   }
+
+  //finds if a path exists between start node and end node--should be for a directed graph, but will make that later
+  routeBetweenNodes(start, target) {
+    let queue = [];
+    let visited = {};
+    let found = false;
+    let curr = start;
+    queue.push(curr);
+
+    //if all nodes are visited, queue will empty and will return false because a path was not found
+    while (queue.length) {
+      curr = queue.shift();
+      if (curr === target) {
+        found = true;
+        break;
+      }
+
+      //add each of currs neighbors to the queue
+      this.adjacencyList[curr].forEach(neighbor => {
+        if (!visited[neighbor]) {
+          queue.push(neighbor);
+        }
+      });
+    }
+
+    return found;
+  }
 }
 
 var g = new UndirectedGraph();
@@ -202,3 +229,4 @@ console.log("Colt's iterative: ");
 console.log(g.depthFirstIterative("A"));
 console.log("BFS Mine: ");
 console.log(g.BFS("A"));
+console.log(g.routeBetweenNodes("A", "E"));

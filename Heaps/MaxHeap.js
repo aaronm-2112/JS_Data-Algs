@@ -17,7 +17,7 @@ class MaxBinaryHeap {
     parentIndex = Math.floor((this.values.length - 1) / 2);
 
     //swap parent and child until the index value is the root node
-    while (this.values[index] > this.values[parentIndex] && index !== 0) {
+    while (index !== 0 && this.values[index] > this.values[parentIndex]) {
       //compare parent and child value to see if we need to swap
       temp = this.values[index];
       this.values[index] = this.values[parentIndex];
@@ -31,6 +31,7 @@ class MaxBinaryHeap {
 
   //Remove max from the heap
   extractMax() {
+    //TODO: Account for when there is only one element. and 0 elements. 4/04/20
     let max,
       temp,
       child,
@@ -55,15 +56,15 @@ class MaxBinaryHeap {
         }
       }
 
-      if(this.values[child] > this.values[parent]) {
+      if (this.values[child] > this.values[parent]) {
         //swap the parent with the child
         temp = this.values[parent];
         this.values[parent] = this.values[child];
         this.values[child] = temp;
       } else {
-        break; 
+        break;
       }
-      
+
       //update the parent and the child index
       parent = child;
       child = child * 2 + 1;
