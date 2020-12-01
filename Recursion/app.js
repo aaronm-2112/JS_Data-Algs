@@ -127,3 +127,8 @@ console.log(robotPath(3, 5, [[1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1]])
 console.log(robotPath(3, 4, [[1, 1, 1, 1], [0, 1, 1, 1], [1, 1, 1, 1]])); //E:[r,d,d,r,r] G:[r,d,d,r,r]
 console.log(robotPath(3, 4, [[1, 1, 1, 1], [1, 1, 1, 1], [0, 1, 1, 1]])); //E: [d,r,d,r,r] G: [d,r,d,r,r]
 console.log(robotPath(4, 4, [[0, 0, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]])); //E: empty collection G: Empty collection
+
+
+
+
+
