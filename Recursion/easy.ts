@@ -187,6 +187,46 @@ function reverse(value: string): string {
 
 console.log("reverse of abc: " + reverse("abc"))
 
-// function isPalindrome(value: string): string {
+// Test whether a string is a palindrome
+// Time: O(log s)
+// Space: O(log s)
 
-// }
+function isPalindrome(value: string): boolean {
+  const reversedValue = reverse(value)
+
+  return value === reversedValue
+}
+
+console.log("abc is a palindrome: " + isPalindrome('abc'))
+console.log("tacocat is a palindrome: " + isPalindrome('tacocat'))
+
+
+// Given an array of numbers and a generic function return true if any number passes the generic function's test
+// Output: Single boolean value 
+// Assumptions: The generic function returns true or false and throws no errors 
+
+
+// a generic function
+const isOdd = (val: number) => val % 2 !== 0;
+
+// Time: O(ng) where n is linear growth in relation to the number array and g is some generic function for every n 
+// Space: O(n + g) there are at most n stacks as well as however many stacks for the generic function
+
+function someRecursive(array: number[],
+  generic: Function, pass = { passing: false }) {
+
+  // add whatever parameters you deem necessary - good luck!
+  if (!array.length) return false
+
+  if (pass["passing"]) return true
+
+  if (!pass["passing"]) {
+    pass["passing"] = generic(array[0])
+    someRecursive(array.splice(1), generic, pass)
+  }
+
+  return pass["passing"]
+}
+
+console.log(someRecursive([2, 4, 6, 8, 9], isOdd, { passing: false })) // E: True, G: True
+console.log(someRecursive([2, 9, 4, 8], isOdd, { passing: false }))    // E: True, G: True 
