@@ -31,6 +31,7 @@ steps(4);
 steps(5);
 steps(6);
 steps(30);
+// TODO: Convert the solution to typescript 
 //second recursion question:
 //   Create an algorithm that allows a robot to get to the bottom right of a maze.
 //   The robot can only move down and right.

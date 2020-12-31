@@ -173,8 +173,8 @@ function fibbtm(value: number): number {
 console.log("Fibbtm: " + fibbtm(7))
 
 
-// Time: O( log s)
-// Space: O(log s)
+// Time: O( s)
+// Space: O( log s)
 function reverse(value: string): string {
   if (value.length === 1) return value
 
@@ -188,7 +188,7 @@ function reverse(value: string): string {
 console.log("reverse of abc: " + reverse("abc"))
 
 // Test whether a string is a palindrome
-// Time: O(log s)
+// Time: O(s)
 // Space: O(log s)
 
 function isPalindrome(value: string): boolean {
@@ -230,3 +230,103 @@ function someRecursive(array: number[],
 
 console.log(someRecursive([2, 4, 6, 8, 9], isOdd, { passing: false })) // E: True, G: True
 console.log(someRecursive([2, 9, 4, 8], isOdd, { passing: false }))    // E: True, G: True 
+
+
+console.log(Array.prototype.concat([8], [[8, 3, 2], [4, 3, 2]]))
+
+// Given: A list of numbers with any number of nested lists. EX: [1,2,[3,4,[4,5]],1]
+// Output: A flattened array of numbers. EX: [1,2,3,4,4,5,1]
+
+// Runtime(I am admittedly not certain): O(na^d) where n is elements and a is internal arrays and d is depth
+// Space: O(d)
+function flatten(input: any[]): any[] {
+  // create an output array 
+  const output: any[] = []
+  // call the flatten helper with a outputArray parameter 
+  flattenHelper(input, output)
+  // return the output array
+  return output
+}
+
+function flattenHelper(input: any[], output: any[]): void {
+  // check if the input list is empty 
+  if (!input.length) {
+    return
+  }
+
+  // iterate through the input
+  input.forEach(elem => {
+    // check if the current element is an array 
+    if (elem.length) {
+      // if so call flattenHelper on the array
+      flattenHelper(elem, output)
+    } else {
+      // else add the element to the output array 
+      output.push(elem)
+    }
+  })
+}
+
+// flatten tests
+console.log(flatten([1, [2, [3]]])) // E: [1,2,3] G: [1,2,3]
+
+
+// Given: An array of strings 
+// Output: An array of strings with the first letter capitalized
+// Assume: No spaces in the strings 
+
+// O(ns) where s is the string being copied into a substring 
+// Space: O(n)
+function capitalizeFirst(input: Array<string>): Array<string> {
+  if (!input.length) {
+    return []
+  }
+
+  const output: Array<string> = []
+
+  capitalizeFirstHelper(input, output)
+
+  return output
+}
+
+function capitalizeFirstHelper(input: Array<string>, output: Array<string>): void {
+  if (!input.length) {
+    return
+  }
+
+  let lastInputElem = input[input.length - 1]
+  let upperCaseElem = lastInputElem[0].toUpperCase() + lastInputElem.substring(1)
+  output.unshift(upperCaseElem)
+
+  input.pop()
+  capitalizeFirstHelper(input, output)
+}
+
+console.log(capitalizeFirst(['fun', 'cheese']))
+
+
+function capitalizeWords(input: Array<string>): Array<string> {
+  if (!input.length) {
+    return []
+  }
+
+  const output: Array<string> = []
+
+  capitalizeWordsHelper(input, output)
+
+  return output
+}
+
+function capitalizeWordsHelper(input: Array<string>, output: Array<string>): void {
+  if (!input.length) {
+    return
+  }
+
+  let upperCaseElem = input[input.length - 1].toUpperCase()
+  output.unshift(upperCaseElem)
+
+  input.pop()
+  capitalizeWordsHelper(input, output)
+}
+
+console.log(capitalizeWords(['one', 'two']))

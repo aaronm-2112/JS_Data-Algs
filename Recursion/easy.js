@@ -136,6 +136,9 @@ function reverse(value) {
     return right + left;
 }
 console.log("reverse of abc: " + reverse("abc"));
+// Test whether a string is a palindrome
+// Time: O(log s)
+// Space: O(log s)
 function isPalindrome(value) {
     var reversedValue = reverse(value);
     return value === reversedValue;
@@ -164,3 +167,78 @@ function someRecursive(array, generic, pass) {
 }
 console.log(someRecursive([2, 4, 6, 8, 9], isOdd, { passing: false })); // E: True, G: True
 console.log(someRecursive([2, 9, 4, 8], isOdd, { passing: false })); // E: True, G: True 
+console.log(Array.prototype.concat([8], [[8, 3, 2], [4, 3, 2]]));
+// Given: A list of numbers with any number of nested lists. EX: [1,2,[3,4,[4,5]],1]
+// Output: A flattened array of numbers. EX: [1,2,3,4,4,5,1]
+// Runtime(I am admittedly not certain): O(na^d) where n is elements and a is internal arrays and d is depth
+// Space: O(d)
+function flatten(input) {
+    // create an output array 
+    var output = [];
+    // call the flatten helper with a outputArray parameter 
+    flattenHelper(input, output);
+    // return the output array
+    return output;
+}
+function flattenHelper(input, output) {
+    // check if the input list is empty 
+    if (!input.length) {
+        return;
+    }
+    // iterate through the input
+    input.forEach(function (elem) {
+        // check if the current element is an array 
+        if (elem.length) {
+            // if so call flattenHelper on the array
+            flattenHelper(elem, output);
+        }
+        else {
+            // else add the element to the output array 
+            output.push(elem);
+        }
+    });
+}
+// flatten tests
+console.log(flatten([1, [2, [3]]])); // E: [1,2,3] G: [1,2,3]
+// Given: An array of strings 
+// Output: An array of strings with the first letter capitalized
+// Assume: No spaces in the strings 
+// O(ns) where s is the string being copied into a substring 
+// Space: O(n)
+function capitalizeFirst(input) {
+    if (!input.length) {
+        return [];
+    }
+    var output = [];
+    capitalizeFirstHelper(input, output);
+    return output;
+}
+function capitalizeFirstHelper(input, output) {
+    if (!input.length) {
+        return;
+    }
+    var lastInputElem = input[input.length - 1];
+    var upperCaseElem = lastInputElem[0].toUpperCase() + lastInputElem.substring(1);
+    output.unshift(upperCaseElem);
+    input.pop();
+    capitalizeFirstHelper(input, output);
+}
+console.log(capitalizeFirst(['fun', 'cheese']));
+function capitalizeWords(input) {
+    if (!input.length) {
+        return [];
+    }
+    var output = [];
+    capitalizeWordsHelper(input, output);
+    return output;
+}
+function capitalizeWordsHelper(input, output) {
+    if (!input.length) {
+        return;
+    }
+    var upperCaseElem = input[input.length - 1].toUpperCase();
+    output.unshift(upperCaseElem);
+    input.pop();
+    capitalizeWordsHelper(input, output);
+}
+console.log(capitalizeWords(['one', 'two']));
