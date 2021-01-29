@@ -75,7 +75,7 @@ function trapRainWater(nums) {
         for (var j = i + 1; j < nums.length; j++) {
             // console.log(`Inner loop i value: ${i} and j value: ${j}`)
             if (nums[j] < nums[i]) { // a candidate for the greatest height that is less than the height at i 
-                if (nums[j] > minContainerWall) {
+                if (nums[j] >= minContainerWall) {
                     minContainerWall = nums[j];
                     minContainerWallIdx = j;
                 }
@@ -102,6 +102,7 @@ function trapRainWater(nums) {
     }
     return trappedUnitsOfWater;
 }
-console.log(trapRainWater([1, 0, 2, 0, 1, 0, 2]));
-console.log(trapRainWater([4, 2, 0, 3, 2, 5]));
-console.log(trapRainWater([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]));
+console.log(trapRainWater([1, 0, 2, 0, 1, 0, 2])); // E: 6 G: 6
+console.log(trapRainWater([4, 2, 0, 3, 2, 5])); // E: 9 G: 6
+console.log(trapRainWater([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1])); // E: 6  G: 6
+console.log(trapRainWater([0, 2, 0]));
