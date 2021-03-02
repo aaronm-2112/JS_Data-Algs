@@ -1,4 +1,4 @@
-var mergeSort = array => {
+var mergeSort = (array) => {
   if (array.length <= 1) {
     return array;
   }
@@ -137,3 +137,67 @@ console.log(quickSort([100, -3, 2, 4, 6, 9, 1, 2, 5, 3, 23]));
 //let result = [100, -3, 2, 4, 6, 9, 1, 2, 5, 3, 23];
 // quickSort(result);
 // console.log(result);
+
+// alternative quicksort solution
+
+// Space: O(log n)
+// Time: O(n log n )
+const quicksort = function (array, left, right) {
+  if (left < right) {
+    const partitionIndex = partition(arr, left, right);
+    // left
+    quicksort(array, left, partitionIndex - 1);
+    // right
+    quicksort(array, partitionIndex + 1, right);
+  }
+};
+
+const partition = function (array, left, right) {
+  const pivotElement = array[right];
+  let partitionIndex = left;
+  for (let j = left; j < right; j++) {
+    if (array[j] < pivotElement) {
+      swap(array, partitionIndex, j);
+      partitionIndex++;
+    }
+  }
+  swap(array, partitionIndex, right);
+  return partitionIndex;
+};
+
+const swap = function (array, i, j) {
+  const temp = array[i];
+  array[i] = array[j];
+  array[j] = temp;
+};
+
+// quick solution to a sorting problem
+// find kth max
+const getKthLargest = function (array, k) {
+  const indexToFind = array.length - k;
+  quicksort(array, 0, array.length - 1);
+  return array[indexToFind];
+};
+
+// Hoare's Qucikselect algorithm
+// Let's use this in a reframed problem where we want to find the kth smalles in an unordered list
+// time:
+//   Best case/Average Case: O(n) -- when we halve every time, we get n + n/2 + n/4 + n/8 = 2n = n
+//   Worst case: O(n^2) -- when we get a array sorted in reverse order; same as with normal quicksort
+function quickselect(array, left, right, k) {
+  if (left < right) {
+    const partitionIndex = partition(array, left, right);
+
+    if (partitionIndex == k) {
+      return (target = array[partitionIndex]);
+    } else if (partitionIndex < k) {
+      // right
+      return quickselect(array, partitionIndex + 1, right, k);
+    } else {
+      // left
+      return quickselect(array, left, partitionIndex - 1, k);
+    }
+  }
+}
+
+console.log(quickselect([3, 4, 6, 1], 0, 3, 1, 0));
