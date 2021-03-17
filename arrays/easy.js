@@ -1,182 +1,227 @@
 "use strict";
-// // Question #1
+// Question #1
 // // Given an array of integers, return the indices of the two numbers that add up to a given target.
-// var twoSum = function (nums: Array<number>, target: number) {
-//   if (nums.length < 2) { return null }
-//   let difference = 0
-//   let differencesIdx: { [difference: number]: number } = {}
-//   for (let i = 0; i < nums.length; i++) {
-//     difference = target - nums[i]
-//     if (difference > 0) differencesIdx[difference] = i
-//   }
-//   for (let i = 0; i < nums.length; i++) {
-//     difference = target - nums[i]
-//     let targetDifference = target - difference
-//     if (targetDifference > 0 && differencesIdx[targetDifference]) {
-//       return [i, differencesIdx[targetDifference]]
-//     }
-//   }
-//   return null
-// };
+var twoSum = function (nums, target) {
+    if (nums.length < 2) {
+        return null;
+    }
+    var difference = 0;
+    var differencesIdx = {};
+    for (var i = 0; i < nums.length; i++) {
+        difference = target - nums[i];
+        if (difference > 0)
+            differencesIdx[difference] = i;
+    }
+    for (var i = 0; i < nums.length; i++) {
+        difference = target - nums[i];
+        var targetDifference = target - difference;
+        if (targetDifference > 0 && differencesIdx[targetDifference]) {
+            return [i, differencesIdx[targetDifference]];
+        }
+    }
+    return null;
+};
 // // Question #2
 // // Given an array of numbers that represent the height of vertical lines on the x-axis return the greatest possible area
 // // Assume all numbers are positive
 // // Brute Force Solution:
 // // O(n^2)
 // // Space: O(1)
-// const areaOfShape = (nums: Array<number>): number => {
-//   let area = 0
-//   for (let i = 0; i < nums.length; i++) {
-//     let tempArea = 0
-//     for (let j = i + 1; j < nums.length; j++) {
-//       let minSide = Math.min(nums[i], nums[j])
-//       let base = (j - i)
-//       base === minSide ? tempArea = Math.pow(base, 2) : tempArea = base * minSide
-//       if (tempArea > area) area = tempArea
-//     }
-//   }
-//   return area
-// }
+var areaOfShape = function (nums) {
+    var area = 0;
+    for (var i = 0; i < nums.length; i++) {
+        var tempArea = 0;
+        for (var j = i + 1; j < nums.length; j++) {
+            var minSide = Math.min(nums[i], nums[j]);
+            var base = j - i;
+            base === minSide
+                ? (tempArea = Math.pow(base, 2))
+                : (tempArea = base * minSide);
+            if (tempArea > area)
+                area = tempArea;
+        }
+    }
+    return area;
+};
 // // test cases
 // console.log(areaOfShape([3, 2, 4])) // E: 6, G: 6
 // console.log(areaOfShape([6, 8, 9, 3, 9])) // E: 32, G: 32
 // // Optimal solution using shifting pointers
 // // O(n)
 // // Space: O(1)
-// const areaOfShapeOptimal = (nums: Array<number>): number => {
-//   let maxArea = 0
-//   let leftPointer = 0
-//   let rightPointer = nums.length - 1
-//   while (leftPointer < rightPointer) {
-//     const minimumSide = Math.min(nums[leftPointer], nums[rightPointer])
-//     const base = rightPointer - leftPointer
-//     const area = minimumSide * base
-//     if (area > maxArea) maxArea = area
-//     // the pointer with the minimum side needs to close inward
-//     if (minimumSide == nums[leftPointer]) {
-//       leftPointer += 1
-//     } else {
-//       rightPointer -= 1
-//     }
-//   }
-//   return maxArea
-// }
+var areaOfShapeOptimal = function (nums) {
+    var maxArea = 0;
+    var leftPointer = 0;
+    var rightPointer = nums.length - 1;
+    while (leftPointer < rightPointer) {
+        var minimumSide = Math.min(nums[leftPointer], nums[rightPointer]);
+        var base = rightPointer - leftPointer;
+        var area = minimumSide * base;
+        if (area > maxArea)
+            maxArea = area;
+        // the pointer with the minimum side needs to close inward
+        if (minimumSide == nums[leftPointer]) {
+            leftPointer += 1;
+        }
+        else {
+            rightPointer -= 1;
+        }
+    }
+    return maxArea;
+};
 // // test cases
 // console.log(areaOfShapeOptimal([3, 2, 4])) // E: 6, G: 6
 // console.log(areaOfShapeOptimal([6, 8, 9, 3, 9])) // E: 32, G: 32
-// function trapRainWater(nums: Array<number>): number {
-//   let minContainerWall = 0
-//   let minContainerWallIdx = 0
-//   let trappedUnitsOfWater = 0
-//   let i = 0
-//   while (i < nums.length - 1) {
-//     minContainerWall = 0
-//     minContainerWallIdx = 0
-//     for (let j = i + 1; j < nums.length; j++) {
-//       // console.log(`Inner loop i value: ${i} and j value: ${j}`)
-//       if (nums[j] < nums[i]) { // a candidate for the greatest height that is less than the height at i
-//         if (nums[j] >= minContainerWall) {
-//           minContainerWall = nums[j]
-//           minContainerWallIdx = j
-//         }
-//       } else { // nums[j] >= nums[i] so fill in all units of water for spaces i - j
-//         let waterHeight = Math.min(nums[i], nums[j])
-//         for (let p = i; p < j; p++) {
-//           trappedUnitsOfWater += waterHeight - nums[p]
-//         }
-//         // now set i to j as we have filled in a distinct container from i to j with water
-//         i = j
-//         // stop the inner for loop
-//         continue
-//       }
-//     }
-//     // assume we never found a height >= the height at i
-//     // fill i to maxheightidx with water using maxHeight - nums[curr]
-//     if (i < minContainerWallIdx) {
-//       for (let curr = i + 1; curr < minContainerWallIdx; curr++) {
-//         trappedUnitsOfWater += minContainerWall - nums[curr]
-//       }
-//       i = minContainerWallIdx
-//     }
-//   }
-//   return trappedUnitsOfWater
-// }
+function trapRainWater(nums) {
+    var minContainerWall = 0;
+    var minContainerWallIdx = 0;
+    var trappedUnitsOfWater = 0;
+    var i = 0;
+    while (i < nums.length - 1) {
+        minContainerWall = 0;
+        minContainerWallIdx = 0;
+        for (var j = i + 1; j < nums.length; j++) {
+            // console.log(`Inner loop i value: ${i} and j value: ${j}`)
+            if (nums[j] < nums[i]) {
+                // a candidate for the greatest height that is less than the height at i
+                if (nums[j] >= minContainerWall) {
+                    minContainerWall = nums[j];
+                    minContainerWallIdx = j;
+                }
+            }
+            else {
+                // nums[j] >= nums[i] so fill in all units of water for spaces i - j
+                var waterHeight = Math.min(nums[i], nums[j]);
+                for (var p = i; p < j; p++) {
+                    trappedUnitsOfWater += waterHeight - nums[p];
+                }
+                // now set i to j as we have filled in a distinct container from i to j with water
+                i = j;
+                // stop the inner for loop
+                continue;
+            }
+        }
+        // assume we never found a height >= the height at i
+        // fill i to maxheightidx with water using maxHeight - nums[curr]
+        if (i < minContainerWallIdx) {
+            for (var curr = i + 1; curr < minContainerWallIdx; curr++) {
+                trappedUnitsOfWater += minContainerWall - nums[curr];
+            }
+            i = minContainerWallIdx;
+        }
+    }
+    return trappedUnitsOfWater;
+}
 // console.log(trapRainWater([1, 0, 2, 0, 1, 0, 2])) // E: 6 G: 6
 // console.log(trapRainWater([4, 2, 0, 3, 2, 5]))    // E: 9 G: 6
 // console.log(trapRainWater([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]))  // E: 6  G: 6
 // console.log(trapRainWater([0, 2, 0]))
-// // 2D Array Questions-----------------------------------------------------------
-// // calculate time for a set of oranges to rot a set of fresh oranges if a rotten orange will rot any adjacent
-// // fresho oranges every minute. If all of the fresh oranges cannot be rotted return -1.
+// // 2D Array Traversals and Questions-----------------------------------------------------------
 var directions = [
     [-1, 0],
     [0, 1],
     [1, 0],
     [0, -1],
 ];
+var createCopy = function (array) {
+    return new Array(array.length).fill([]).map(function () {
+        return new Array(array[0].length).fill(false);
+    });
+};
+// basic traversals
+var dfs = function (array, currentPosition, visited) {
+    var row = currentPosition[0];
+    var col = currentPosition[1];
+    visited[row][col] = true;
+    console.log(array[row][col]);
+    for (var _i = 0, directions_1 = directions; _i < directions_1.length; _i++) {
+        var dir = directions_1[_i];
+        var nextRow = row + dir[0];
+        var nextCol = col + dir[1];
+        if (nextRow >= 0 &&
+            nextRow < array.length &&
+            nextCol >= 0 &&
+            nextCol < array[nextRow].length) {
+            if (visited[nextRow][nextCol] !== true) {
+                dfs(array, [nextRow, nextCol], visited);
+            }
+        }
+    }
+};
+var test2darray = [
+    [0, 1, 2, 3],
+    [4, 5, 6, 7],
+];
+dfs(test2darray, [0, 0], createCopy(test2darray));
+// // calculate time for a set of oranges to rot a set of fresh oranges if a rotten orange will rot any adjacent
+// // fresho oranges every minute. If all of the fresh oranges cannot be rotted return -1.
 // // Time: O(MxN)
 // // Space: O(MxN) --b/c worst case we can have all rotten oranges
-// function calculateTimeToRotOranges(matrix: number[][]) : number {
-//     // track all oranges
-//     let freshOrangesTotal: number = 0
-//     let rottenOranges: number[][] = []
-//     // check if there are elements in the array
-//     for(let row = 0; row < matrix.length; row++){
-//         for(let col = 0; col < matrix[0].length; col++){
-//             // check if position is where a fresh orange is located
-//             if(matrix[row][col] === 1){
-//                 freshOrangesTotal += 1
-//             }else if(matrix[row][col] === 2) {
-//                 rottenOranges.push([row, col])
-//             }
-//         }
-//     }
-//     // declare total time
-//     let totalTime = 0
-//     // traverse the current collection of rotten orange locations
-//     while(rottenOranges.length){
-//         console.log(rottenOranges)
-//         let rotted = false
-//         const newRottenOranges: number[][] = []
-//         for (let i=0; i<rottenOranges.length; i++) {
-//           // for each rotten orange check its 4 adjacent positions
-//           for(let j=0; j<directions.length; j++ ) {
-//               const nextRow = rottenOranges[i][0] + directions[j][0]
-//               const nextCol = rottenOranges[i][1] + directions[j][1]
-//                 // check if the the adjacent position is in bounds
-//                 if(nextRow < matrix.length && nextRow >= 0 && nextCol < matrix[0].length && nextCol >= 0) {
-//                     // check if there is a fresh orange located at this position
-//                     if(matrix[nextRow][nextCol] === 1){
-//                         // mark the orange as rotted
-//                         matrix[nextRow][nextCol] = 2
-//                         // set rotted to true
-//                         rotted = true
-//                         // decrease the amount of fresh oranges
-//                         freshOrangesTotal -= 1
-//                         // add the new rotted orange's position to the collection of new rotten orange positions
-//                         newRottenOranges.push([nextRow, nextCol])
-//                     }
-//                 }
-//             }
-//         }
-//         // get rid of all the old rotten oranges because we no longer need to consider them
-//         rottenOranges = []
-//         // check if any oranges were rotted
-//         if(rotted){
-//             // increment the total time
-//             totalTime += 1
-//             // add the new rotten orange locations to the collection of rotten orange locations
-//             rottenOranges = newRottenOranges
-//         }
-//     }
-//     // check if there are fresh oranges that didn't rot
-//     if(freshOrangesTotal > 0){
-//         // return -1 to mark not all oranges were rotted
-//         return -1
-//     }
-//     // all oranges rotted. return the total amount of time this took
-//     return totalTime
-// }
+function calculateTimeToRotOranges(matrix) {
+    // track all oranges
+    var freshOrangesTotal = 0;
+    var rottenOranges = [];
+    // check if there are elements in the array
+    for (var row = 0; row < matrix.length; row++) {
+        for (var col = 0; col < matrix[0].length; col++) {
+            // check if position is where a fresh orange is located
+            if (matrix[row][col] === 1) {
+                freshOrangesTotal += 1;
+            }
+            else if (matrix[row][col] === 2) {
+                rottenOranges.push([row, col]);
+            }
+        }
+    }
+    // declare total time
+    var totalTime = 0;
+    // traverse the current collection of rotten orange locations
+    while (rottenOranges.length) {
+        console.log(rottenOranges);
+        var rotted = false;
+        var newRottenOranges = [];
+        for (var i = 0; i < rottenOranges.length; i++) {
+            // for each rotten orange check its 4 adjacent positions
+            for (var j = 0; j < directions.length; j++) {
+                var nextRow = rottenOranges[i][0] + directions[j][0];
+                var nextCol = rottenOranges[i][1] + directions[j][1];
+                // check if the the adjacent position is in bounds
+                if (nextRow < matrix.length &&
+                    nextRow >= 0 &&
+                    nextCol < matrix[0].length &&
+                    nextCol >= 0) {
+                    // check if there is a fresh orange located at this position
+                    if (matrix[nextRow][nextCol] === 1) {
+                        // mark the orange as rotted
+                        matrix[nextRow][nextCol] = 2;
+                        // set rotted to true
+                        rotted = true;
+                        // decrease the amount of fresh oranges
+                        freshOrangesTotal -= 1;
+                        // add the new rotted orange's position to the collection of new rotten orange positions
+                        newRottenOranges.push([nextRow, nextCol]);
+                    }
+                }
+            }
+        }
+        // get rid of all the old rotten oranges because we no longer need to consider them
+        rottenOranges = [];
+        // check if any oranges were rotted
+        if (rotted) {
+            // increment the total time
+            totalTime += 1;
+            // add the new rotten orange locations to the collection of rotten orange locations
+            rottenOranges = newRottenOranges;
+        }
+    }
+    // check if there are fresh oranges that didn't rot
+    if (freshOrangesTotal > 0) {
+        // return -1 to mark not all oranges were rotted
+        return -1;
+    }
+    // all oranges rotted. return the total amount of time this took
+    return totalTime;
+}
 // // test case
 // let testOrangesOne = [
 //        [2,1,1,0,0],
@@ -193,56 +238,63 @@ var directions = [
 // console.log(calculateTimeToRotOranges(testOrangesOne))
 // console.log(calculateTimeToRotOranges(testOrangesTwo))
 // // alternative solution -- aka, not my own
-// const ROTTEN = 2
-// const FRESH = 1
-// const EMPTY = 0
-// const orangesRotting = function(grid: number[][]) {
-//   if(grid.length === 0 ) return 0
-//   const queue: number[][] = []
-//   let freshOranges = 0
-//   for(let row=0; row<grid.length; row++){
-//     for(let col=0; col < grid[0].length; col++){
-//       if(grid[row][col] === ROTTEN){
-//         queue.push([row,col])
-//       }
-//       if(grid[row][col] === FRESH){
-//         freshOranges += 1
-//       }
-//     }
-//   }
-//    let currentQueueSize = queue.length
-//    let minutes = 0
-//    while(queue.length > 0){
-//      if(currentQueueSize === 0 ){
-//        minutes += 1
-//        currentQueueSize = queue.length
-//      }
-//      const currentOrange = queue.shift()
-//      currentQueueSize--
-//      const row = currentOrange![0]
-//      const col = currentOrange![1]
-//      for(let i=0; i<directions.length;i++){
-//        const currentDir = directions[i]
-//        const nextRow = currentDir[0] + row
-//        const nextCol = currentDir[1] + col
-//        if(nextRow < 0 || nextRow >= grid.length || nextCol < 0 || nextCol >= grid[0].length){
-//           continue
-//        }
-//        if(grid[nextRow][nextCol] === FRESH ){
-//          grid[nextRow][nextCol] = 2
-//          freshOranges--
-//          queue.push([nextRow, nextCol])
-//        }
-//      }
-//    }
-//    if(freshOranges <= 0 ){
-//      return -1
-//    }
-//    return minutes
-// }
+var ROTTEN = 2;
+var FRESH = 1;
+var EMPTY = 0;
+var orangesRotting = function (grid) {
+    if (grid.length === 0)
+        return 0;
+    var queue = [];
+    var freshOranges = 0;
+    for (var row = 0; row < grid.length; row++) {
+        for (var col = 0; col < grid[0].length; col++) {
+            if (grid[row][col] === ROTTEN) {
+                queue.push([row, col]);
+            }
+            if (grid[row][col] === FRESH) {
+                freshOranges += 1;
+            }
+        }
+    }
+    var currentQueueSize = queue.length;
+    var minutes = 0;
+    while (queue.length > 0) {
+        if (currentQueueSize === 0) {
+            minutes += 1;
+            currentQueueSize = queue.length;
+        }
+        var currentOrange = queue.shift();
+        currentQueueSize--;
+        var row = currentOrange[0];
+        var col = currentOrange[1];
+        for (var i = 0; i < directions.length; i++) {
+            var currentDir = directions[i];
+            var nextRow = currentDir[0] + row;
+            var nextCol = currentDir[1] + col;
+            if (nextRow < 0 ||
+                nextRow >= grid.length ||
+                nextCol < 0 ||
+                nextCol >= grid[0].length) {
+                continue;
+            }
+            if (grid[nextRow][nextCol] === FRESH) {
+                grid[nextRow][nextCol] = 2;
+                freshOranges--;
+                queue.push([nextRow, nextCol]);
+            }
+        }
+    }
+    if (freshOranges <= 0) {
+        return -1;
+    }
+    return minutes;
+};
 // walls and gates question
 // given a 2D array containing -1s(walls), 0s(gates), and INFs(emoty room), fill each empty room with the number of steps to the nearest gate.
 // if it is impossible to reach a gate, leave INF as the value. INF is equal to 2147483647.
+// Output: A gate with updated distance values (when applicable)
+// Time: O(MxN)
+// Space: O(MxN + q) where q is the size of the queue and can be as large as the diagonal of the grid
 var shortestPathToExit = function (grid) {
     // declare the collection of all gates
     var gates = [];
@@ -324,3 +376,116 @@ console.log(shortestPathToExit([
     [0, 2147483647, 2147483647, 0],
     [-1, -1, -1, 2147483647],
 ]));
+// alternative solution using DFS
+// O(n)
+// space: O(n)
+var wallsAndGates = function (grid) {
+    var WALL = -1;
+    var GATE = 0;
+    var EMPTY_ROOM = 2147483647;
+    for (var row = 0; row < grid.length; row++) {
+        for (var col = 0; col < grid[0].length; col++) {
+            if (grid[row][col] === GATE) {
+                // perform our depth first search
+                wallsAndGatesDFS(grid, row, col, 0);
+            }
+        }
+    }
+    return grid;
+};
+function wallsAndGatesDFS(grid, row, col, step) {
+    if (row < 0 ||
+        row >= grid.length ||
+        col < 0 ||
+        col >= grid[0].length ||
+        step > grid[row][col]) {
+        return;
+    }
+    grid[row][col] = step;
+    for (var i = 0; i < directions.length; i++) {
+        var currentDir = directions[i];
+        wallsAndGatesDFS(grid, row + currentDir[0], col + currentDir[1], step++);
+    }
+}
+// 1D Array question
+// given an array of integers sorted in ascending order,
+// return the starting and ending index of a given target value in an array
+// solution needs to be O(log N)
+// O(log n) in best case but all dupes would make this runtime O(n)
+function getTargetIndices(array, target) {
+    var left = 0;
+    var right = array.length - 1;
+    var indices = [];
+    while (left <= right) {
+        var mid = Math.floor((left + right) / 2);
+        if (array[mid] === target) {
+            var startIndex = mid - 1;
+            while (startIndex >= left) {
+                if (array[startIndex] !== target) {
+                    break;
+                }
+                startIndex -= 1;
+            }
+            // add the start index to the indices
+            indices.push(startIndex + 1);
+            var endIndex = mid + 1;
+            while (endIndex <= right) {
+                if (array[endIndex] !== target) {
+                    break;
+                }
+                endIndex += 1;
+            }
+            // add the end index to the indices
+            indices.push(endIndex - 1);
+            // return the indices to the user
+            return indices;
+        }
+        else if (array[mid] < target) {
+            left = mid + 1;
+        }
+        else {
+            right = mid - 1;
+        }
+    }
+    return [-1, -1];
+}
+function getTargetIndicesBS(array, target) {
+    // get the midpoint
+    var mid = Math.floor(array.length / 2);
+    // set the left and right endpoints
+    var startPoint = mid - 1;
+    var endPoint = mid + 1;
+    // account for the situation where mid is the only index to return
+    // binary search on the left side to see if there is a startpoint hat comes before mid - 1
+    var potentialStartIndex = startPoint;
+    while (true) {
+        var tempPotential = potentialStartIndex;
+        tempPotential = binarySearch(array, 0, tempPotential, target);
+        if (tempPotential === -1) {
+            break;
+        }
+        potentialStartIndex = tempPotential;
+    }
+    return [potentialStartIndex, -1];
+}
+function binarySearch(array, left, right, target) {
+    if (left > right) {
+        return -1;
+    }
+    var mid = Math.floor((left + right) / 2);
+    if (array[mid] === target) {
+        return mid;
+    }
+    else if (array[mid] < target) {
+        return binarySearch(array, mid + 1, right, target);
+    }
+    else {
+        return binarySearch(array, left, mid - 1, target);
+    }
+}
+console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 4)); // E: [7,7] G: [7,7]
+console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 3)); // E: [5,6] G: [5,6]
+console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 1)); // E: [0,2] G: [0,2]
+console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 6)); // E: [9,10] G: [9,10]
+// the solution for left is off by one
+console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 1)); // E: [7,7] G: [7,7]
