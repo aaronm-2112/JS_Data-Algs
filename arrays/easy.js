@@ -128,7 +128,8 @@ var createCopy = function (array) {
         return new Array(array[0].length).fill(false);
     });
 };
-// basic traversals
+// basic traversals-------------
+// DFS
 var dfs = function (array, currentPosition, visited) {
     var row = currentPosition[0];
     var col = currentPosition[1];
@@ -152,9 +153,11 @@ var test2darray = [
     [0, 1, 2, 3],
     [4, 5, 6, 7],
 ];
-dfs(test2darray, [0, 0], createCopy(test2darray));
+dfs(test2darray, [0, 0], createCopy(test2darray)); // E: 0,1,2,3,7,6,5,4 G: 0,1,2,3,7,6,5,4
+// BFS
 // // calculate time for a set of oranges to rot a set of fresh oranges if a rotten orange will rot any adjacent
 // // fresho oranges every minute. If all of the fresh oranges cannot be rotted return -1.
+// 2D Array Questions -----------
 // // Time: O(MxN)
 // // Space: O(MxN) --b/c worst case we can have all rotten oranges
 function calculateTimeToRotOranges(matrix) {
@@ -450,23 +453,39 @@ function getTargetIndices(array, target) {
     return [-1, -1];
 }
 function getTargetIndicesBS(array, target) {
-    // get the midpoint
-    var mid = Math.floor(array.length / 2);
-    // set the left and right endpoints
-    var startPoint = mid - 1;
-    var endPoint = mid + 1;
-    // account for the situation where mid is the only index to return
-    // binary search on the left side to see if there is a startpoint hat comes before mid - 1
-    var potentialStartIndex = startPoint;
-    while (true) {
-        var tempPotential = potentialStartIndex;
-        tempPotential = binarySearch(array, 0, tempPotential, target);
-        if (tempPotential === -1) {
-            break;
-        }
-        potentialStartIndex = tempPotential;
+    if (array.length === 0)
+        return [-1, -1];
+    // binary search for an index that holds our target value -- may return -1 if the target isn't in the array
+    var firstPos = binarySearch(array, 0, array.length - 1, target);
+    if (firstPos === -1)
+        return [-1, -1];
+    var leftPointer = firstPos - 1;
+    var tempLeftPointer = leftPointer;
+    while (leftPointer >= 0 && array[leftPointer] === target) {
+        tempLeftPointer = leftPointer;
+        leftPointer = binarySearch(array, 0, leftPointer - 1, target);
     }
-    return [potentialStartIndex, -1];
+    if (leftPointer === -1) {
+        leftPointer = tempLeftPointer;
+    }
+    else {
+        leftPointer += 1;
+    }
+    var rightPointer = firstPos + 1;
+    var tempRightPointer = rightPointer;
+    while (rightPointer < array.length - 1 &&
+        array[rightPointer] === target &&
+        rightPointer >= 0) {
+        tempRightPointer = rightPointer;
+        rightPointer = binarySearch(array, rightPointer + 1, array.length - 1, target);
+    }
+    if (rightPointer === -1) {
+        rightPointer = tempRightPointer;
+    }
+    else {
+        rightPointer -= 1;
+    }
+    return [leftPointer, rightPointer];
 }
 function binarySearch(array, left, right, target) {
     if (left > right) {
@@ -488,4 +507,6 @@ console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 3)); // E: [5,6]
 console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 1)); // E: [0,2] G: [0,2]
 console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 6)); // E: [9,10] G: [9,10]
 // the solution for left is off by one
-console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 1)); // E: [7,7] G: [7,7]
+console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 1)); // E: [0,2] G: [0,2]
+console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 3)); // E: [5,6] G: [5,6]
+console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 4)); // E: [5,6] G: [5,6]

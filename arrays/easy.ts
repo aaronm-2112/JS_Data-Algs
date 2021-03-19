@@ -123,6 +123,129 @@ function trapRainWater(nums: Array<number>): number {
   return trappedUnitsOfWater;
 }
 
+// 1D Array question
+// given an array of integers sorted in ascending order,
+// return the starting and ending index of a given target value in an array
+// solution needs to be O(log N)
+
+// O(log n) in best case but all dupes would make this runtime O(n)
+function getTargetIndices(array: number[], target: number): number[] {
+  let left = 0;
+  let right = array.length - 1;
+  const indices: number[] = [];
+
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+
+    if (array[mid] === target) {
+      let startIndex = mid - 1;
+      while (startIndex >= left) {
+        if (array[startIndex] !== target) {
+          break;
+        }
+        startIndex -= 1;
+      }
+
+      // add the start index to the indices
+      indices.push(startIndex + 1);
+
+      let endIndex = mid + 1;
+      while (endIndex <= right) {
+        if (array[endIndex] !== target) {
+          break;
+        }
+        endIndex += 1;
+      }
+
+      // add the end index to the indices
+      indices.push(endIndex - 1);
+
+      // return the indices to the user
+      return indices;
+    } else if (array[mid] < target) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+
+  return [-1, -1];
+}
+
+// O(log n ) in all cases
+// space: O(1)
+function getTargetIndicesBS(array: number[], target: number): number[] {
+  if (array.length === 0) return [-1, -1];
+  // binary search for an index that holds our target value -- may return -1 if the target isn't in the array
+  const firstPos = binarySearch(array, 0, array.length - 1, target);
+  if (firstPos === -1) return [-1, -1];
+  let leftPointer = firstPos - 1;
+  let tempLeftPointer = leftPointer;
+  while (leftPointer >= 0 && array[leftPointer] === target) {
+    tempLeftPointer = leftPointer;
+    leftPointer = binarySearch(array, 0, leftPointer - 1, target);
+  }
+  if (leftPointer === -1) {
+    leftPointer = tempLeftPointer;
+  } else {
+    leftPointer += 1;
+  }
+  let rightPointer = firstPos + 1;
+  let tempRightPointer = rightPointer;
+  while (
+    rightPointer < array.length - 1 &&
+    array[rightPointer] === target &&
+    rightPointer >= 0
+  ) {
+    tempRightPointer = rightPointer;
+    rightPointer = binarySearch(
+      array,
+      rightPointer + 1,
+      array.length - 1,
+      target
+    );
+  }
+
+  if (rightPointer === -1) {
+    rightPointer = tempRightPointer;
+  } else {
+    rightPointer -= 1;
+  }
+
+  return [leftPointer, rightPointer];
+}
+
+function binarySearch(
+  array: number[],
+  left: number,
+  right: number,
+  target: number
+): number {
+  if (left > right) {
+    return -1;
+  }
+
+  let mid: number = Math.floor((left + right) / 2);
+
+  if (array[mid] === target) {
+    return mid;
+  } else if (array[mid] < target) {
+    return binarySearch(array, mid + 1, right, target);
+  } else {
+    return binarySearch(array, left, mid - 1, target);
+  }
+}
+
+console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 4)); // E: [7,7] G: [7,7]
+console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 3)); // E: [5,6] G: [5,6]
+console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 1)); // E: [0,2] G: [0,2]
+console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 6)); // E: [9,10] G: [9,10]
+
+// the solution for left is off by one
+console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 1)); // E: [0,2] G: [0,2]
+console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 3)); // E: [5,6] G: [5,6]
+console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 4)); // E: [7,7] G: [7,7]
+
 // console.log(trapRainWater([1, 0, 2, 0, 1, 0, 2])) // E: 6 G: 6
 // console.log(trapRainWater([4, 2, 0, 3, 2, 5]))    // E: 9 G: 6
 // console.log(trapRainWater([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]))  // E: 6  G: 6
@@ -143,7 +266,9 @@ const createCopy = (array: number[][]): boolean[][] => {
   });
 };
 
-// basic traversals
+// basic traversals-------------
+
+// DFS
 const dfs = (
   array: number[][],
   currentPosition: number[],
@@ -178,9 +303,12 @@ let test2darray = [
 ];
 dfs(test2darray, [0, 0], createCopy(test2darray)); // E: 0,1,2,3,7,6,5,4 G: 0,1,2,3,7,6,5,4
 
+// BFS
+
 // // calculate time for a set of oranges to rot a set of fresh oranges if a rotten orange will rot any adjacent
 // // fresho oranges every minute. If all of the fresh oranges cannot be rotted return -1.
 
+// 2D Array Questions -----------
 // // Time: O(MxN)
 // // Space: O(MxN) --b/c worst case we can have all rotten oranges
 function calculateTimeToRotOranges(matrix: number[][]): number {
@@ -486,105 +614,3 @@ function wallsAndGatesDFS(
     wallsAndGatesDFS(grid, row + currentDir[0], col + currentDir[1], step++);
   }
 }
-
-// 1D Array question
-// given an array of integers sorted in ascending order,
-// return the starting and ending index of a given target value in an array
-// solution needs to be O(log N)
-
-// O(log n) in best case but all dupes would make this runtime O(n)
-function getTargetIndices(array: number[], target: number): number[] {
-  let left = 0;
-  let right = array.length - 1;
-  const indices: number[] = [];
-
-  while (left <= right) {
-    let mid = Math.floor((left + right) / 2);
-
-    if (array[mid] === target) {
-      let startIndex = mid - 1;
-      while (startIndex >= left) {
-        if (array[startIndex] !== target) {
-          break;
-        }
-        startIndex -= 1;
-      }
-
-      // add the start index to the indices
-      indices.push(startIndex + 1);
-
-      let endIndex = mid + 1;
-      while (endIndex <= right) {
-        if (array[endIndex] !== target) {
-          break;
-        }
-        endIndex += 1;
-      }
-
-      // add the end index to the indices
-      indices.push(endIndex - 1);
-
-      // return the indices to the user
-      return indices;
-    } else if (array[mid] < target) {
-      left = mid + 1;
-    } else {
-      right = mid - 1;
-    }
-  }
-
-  return [-1, -1];
-}
-
-function getTargetIndicesBS(array: number[], target: number): number[] {
-  // get the midpoint
-  let mid = Math.floor(array.length / 2);
-
-  // set the left and right endpoints
-  let startPoint = mid - 1;
-  let endPoint = mid + 1;
-
-  // account for the situation where mid is the only index to return
-
-  // binary search on the left side to see if there is a startpoint hat comes before mid - 1
-  let potentialStartIndex = startPoint;
-  while (true) {
-    let tempPotential = potentialStartIndex;
-    tempPotential = binarySearch(array, 0, tempPotential, target);
-    if (tempPotential === -1) {
-      break;
-    }
-    potentialStartIndex = tempPotential;
-  }
-
-  return [potentialStartIndex, -1];
-}
-
-function binarySearch(
-  array: number[],
-  left: number,
-  right: number,
-  target: number
-): number {
-  if (left > right) {
-    return -1;
-  }
-
-  let mid: number = Math.floor((left + right) / 2);
-
-  if (array[mid] === target) {
-    return mid;
-  } else if (array[mid] < target) {
-    return binarySearch(array, mid + 1, right, target);
-  } else {
-    return binarySearch(array, left, mid - 1, target);
-  }
-}
-
-console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 4)); // E: [7,7] G: [7,7]
-console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 3)); // E: [5,6] G: [5,6]
-console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 1)); // E: [0,2] G: [0,2]
-console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 6)); // E: [9,10] G: [9,10]
-
-// the solution for left is off by one
-console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 1)); // E: [7,7] G: [7,7]
