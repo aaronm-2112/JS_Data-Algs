@@ -1,4 +1,4 @@
-class Node {
+export class Node {
   constructor(value) {
     this.value = value;
     this.left = null;
@@ -159,9 +159,12 @@ class BinarySearchTree {
     console.log("After");
     return depthLists;
   }
-  //BST 4.3 
+  //BST 4.3
   createLinkedListss(node, depth, depthLists) {
-    if (node === null) { depth -= 1; return; }
+    if (node === null) {
+      depth -= 1;
+      return;
+    }
     if (!depthLists[depth]) {
       depthLists[depth] = new LinkedList();
     }
@@ -171,30 +174,43 @@ class BinarySearchTree {
     depth -= 1;
   }
 
-  //BST 4.5 Check if bt is a BST 
+  //BST 4.5 Check if bt is a BST
   isBST() {
-    //keep track of ordering for each child in the binary tree. Rationale: Following ordering determines if a valid BST or not. 
-    //Orderings: (< & >=) or (<= & >) 
-    let leftChildrenOrdering = { "lt": false, "lte": false, "gt": false, "gte": false };
-    let rightChildrenOrdering = { "lt": false, "lte": false, "gt": false, "gte": false };
-    //track the parent of each child. Rationale: To compare the child's value with that of its parent to determin its ordering. 
+    //keep track of ordering for each child in the binary tree. Rationale: Following ordering determines if a valid BST or not.
+    //Orderings: (< & >=) or (<= & >)
+    let leftChildrenOrdering = { lt: false, lte: false, gt: false, gte: false };
+    let rightChildrenOrdering = {
+      lt: false,
+      lte: false,
+      gt: false,
+      gte: false,
+    };
+    //track the parent of each child. Rationale: To compare the child's value with that of its parent to determin its ordering.
     let parent = this.root;
     //track if child is a left or right child
-    let child = { "left": false, "right": false };
+    let child = { left: false, right: false };
     //start at the left subtree of the root node -- mark child as left
     child["left"] = true;
     //traverse the tree using a pre-order traversal algorithm that records ordering of the current child in relation to its parent
-    this.isBSTCheck(parent.left, parent, leftChildrenOrdering, rightChildrenOrdering, child)
+    this.isBSTCheck(
+      parent.left,
+      parent,
+      leftChildrenOrdering,
+      rightChildrenOrdering,
+      child
+    );
 
     console.log(leftChildrenOrdering);
     console.log(rightChildrenOrdering);
 
     //ensure the ordering has been upheld in order to determine if valid bst
-    if (leftChildrenOrdering["gt"]) { //check if the left children were ever greater than their parent
+    if (leftChildrenOrdering["gt"]) {
+      //check if the left children were ever greater than their parent
       return false;
     }
 
-    if (rightChildrenOrdering["lt"]) {//check if the right children were ever less than their parent
+    if (rightChildrenOrdering["lt"]) {
+      //check if the right children were ever less than their parent
       return false;
     }
 
@@ -207,12 +223,19 @@ class BinarySearchTree {
     return true;
   }
 
-  isBSTCheck(node, parentNode, leftChildrenOrdering, rightChildrenOrdering, child) {
+  isBSTCheck(
+    node,
+    parentNode,
+    leftChildrenOrdering,
+    rightChildrenOrdering,
+    child
+  ) {
     //check if node is null
     if (!node) return;
 
     //check if the current node is a left or right child
-    if (child["left"]) { //determine ordering of the left child
+    if (child["left"]) {
+      //determine ordering of the left child
       console.log(parentNode.value);
       if (node.value < parentNode.value) {
         leftChildrenOrdering["lt"] = true;
@@ -221,8 +244,8 @@ class BinarySearchTree {
       } else {
         leftChildrenOrdering["gt"] = true;
       }
-
-    } else if (child["right"]) { //determine ordering of the right child 
+    } else if (child["right"]) {
+      //determine ordering of the right child
       if (node.value > parentNode.value) {
         rightChildrenOrdering["gt"] = true;
       } else if (node.value === parentNode.value) {
@@ -237,12 +260,24 @@ class BinarySearchTree {
     child["left"] = true;
     //update parent element
     parentNode = node;
-    this.isBSTCheck(node.left, parentNode, leftChildrenOrdering, rightChildrenOrdering, child);
+    this.isBSTCheck(
+      node.left,
+      parentNode,
+      leftChildrenOrdering,
+      rightChildrenOrdering,
+      child
+    );
 
     //update the state for the call to the right child of the current element -- same parent so do not update
     child["left"] = false;
     child["right"] = true;
-    this.isBSTCheck(node.right, parentNode, leftChildrenOrdering, rightChildrenOrdering, child);
+    this.isBSTCheck(
+      node.right,
+      parentNode,
+      leftChildrenOrdering,
+      rightChildrenOrdering,
+      child
+    );
   }
 }
 
