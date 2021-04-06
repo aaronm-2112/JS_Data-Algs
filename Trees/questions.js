@@ -69,7 +69,10 @@ const maxDepth = function (node, currentDepth) {
 
 console.log(maxDepth(root, 0));
 
-// Question: Return the level order traversal of the nodes' values as an array givn a binary tree
+// Question: Return the level order traversal of the nodes' values as an array givn a binary tree from left to right for each level of the tree.
+// EX Result: [[10], [9,11], [1,2,3,4]]
+// Time: O(n)
+// Space: O(N + 2^d) which can be written as O(N + N/2) drop the constant O(N + N ) = O(N)
 const levelOrderScan = (root) => {
   // check if root is  null
   if (!root) {
@@ -92,7 +95,6 @@ const levelOrderScan = (root) => {
     // extract the current node and the depth
     let currentNode = pair[0];
     let currentDepth = pair[1];
-    console.log("Depth is: " + currentDepth);
 
     // add the current node to the result array
     if (!result[currentDepth]) {
@@ -115,3 +117,39 @@ const levelOrderScan = (root) => {
 };
 
 console.log(levelOrderScan(root)); // E: [[10], [6,16], [5]] G: [[10], [6,16], [5]]
+
+// Time: O(n)
+// Space: O(N + 2^d) which can be written as O(N + N/2) drop the constant O(N + N ) = O(N)
+const levelOrderScanAlt = (root) => {
+  if (!root) {
+    return [];
+  }
+
+  const result = [];
+  const queue = [];
+  queue.push(root);
+
+  while (queue.length) {
+    // keep track of when we are at the start and end of the current level processing
+    let length = queue.length;
+    let count = 0;
+    let currentLevelValues = [];
+
+    while (count < length) {
+      // typical BFS logic for the current level we are exploring
+      const currentNode = queue.shift();
+
+      currentLevelValues.push(currentNode.value);
+      if (currentNode.left) {
+        queue.push(currentNode.left);
+      }
+      if (currentNode.right) {
+        queue.push(currentNode.right);
+      }
+      count += 1;
+    }
+    result.push(currentLevelValues);
+  }
+
+  return result;
+};
