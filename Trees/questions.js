@@ -153,3 +153,45 @@ const levelOrderScanAlt = (root) => {
 
   return result;
 };
+
+// Question: Given a binary tree, imagine you're standin gto the right of the tree.
+//           Return an array of the values o the nodes you can see ordered from top to bottom.
+
+// Time: O(n)
+// Space: O(n)
+const rightSideView = (node, currentDepth, nodeAdded, result) => {
+  if (!node) {
+    return;
+  }
+
+  if (!nodeAdded[currentDepth]) {
+    result.push(node.value);
+    nodeAdded[currentDepth] = true;
+  }
+
+  currentDepth++;
+
+  rightSideView(node.right, currentDepth, nodeAdded, result);
+  rightSideView(node.left, currentDepth, nodeAdded, result);
+};
+
+const getRightSideView = (node) => {
+  let result = [];
+  let nodeAdded = {};
+  let currentDepth = 0;
+
+  rightSideView(node, currentDepth, nodeAdded, result);
+
+  return result;
+};
+
+// an example tree
+let newRoot = new Node();
+newRoot.value = 10;
+newRoot.right = new Node(16);
+newRoot.left = new Node(6);
+newRoot.left.left = new Node(5);
+newRoot.left.right = new Node(21);
+newRoot.left.left.right = new Node(30);
+
+console.log(getRightSideView(newRoot));
