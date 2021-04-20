@@ -158,7 +158,7 @@ const levelOrderScanAlt = (root) => {
 //           Return an array of the values o the nodes you can see ordered from top to bottom.
 
 // Time: O(n)
-// Space: O(n)
+// Space: O(n) -- in the case of a  binary tree where all nodes are on one side in a line
 const rightSideView = (node, currentDepth, nodeAdded, result) => {
   if (!node) {
     return;
@@ -168,6 +168,11 @@ const rightSideView = (node, currentDepth, nodeAdded, result) => {
     result.push(node.value);
     nodeAdded[currentDepth] = true;
   }
+
+  // alternate way to check if a node has been added for the current level that uses less space
+  // if (currentDepth >= result.length) {
+  //   result.push(node.value);
+  // }
 
   currentDepth++;
 
@@ -195,3 +200,120 @@ newRoot.left.right = new Node(21);
 newRoot.left.left.right = new Node(30);
 
 console.log(getRightSideView(newRoot));
+
+// Question: Given a complete binary tree, count the number of nodes. Keep in mind the bottom layer is filled from left to right.
+//           Not all nodes on the second to last layer need to have children.
+
+// Runtime complexity: O(log n)
+// Space complexity: O(log n)
+const getNodeCount = (root) => {
+  if (!root) {
+    return 0;
+  }
+  // traverse to the bottom left of the tree and return the height to get the depth
+  let depth = getLeftMostHeight(root) - 1;
+
+  // calculate the amount of nodes in the bottom layer of the tree -- assumming all nodes were filled
+  let bottomLayerNodes = Math.pow(2, depth);
+
+  // perform a modified binary search to find the last node on the bottom most layer
+  // set a binary search left variable to be 0
+  let binarySearchLeft = 0;
+  // set a binary search right variable to the # of nodes in the bottom layer - 1 (this is b/c we are treating the bottom as an array, which is 0 indexed)
+  let binarySearchRight = bottomLayerNodes - 1;
+
+  let binarySearchTarget;
+
+  // loop until binary search left is equal to binary search right -- this means we found our right most node
+  while (binarySearchLeft !== binarySearchRight) {
+    // set a binary search target variable to be BSL + BSR / 2,  rounded up (this is always the first node on the right half of our current search space)
+    binarySearchTarget = Math.ceil((binarySearchLeft + binarySearchRight) / 2);
+
+    // call traverseToBSTTarget with BSL = 0, BSR = amount of nodes in the tree / 2, and BST
+    let targetNode = traverseToBSTTarget(
+      root,
+      0,
+      bottomLayerNodes - 1,
+      binarySearchTarget
+    );
+
+    // check if the result === null
+    if (targetNode === null) {
+      // set BSR = BST - 1
+      binarySearchRight = binarySearchTarget - 1;
+    } else {
+      // set BSL = BST
+      binarySearchLeft = binarySearchTarget;
+    }
+  }
+
+  // return sum of nodes from 0 to depth - 1 + ( BSL + 1 )
+  let sum = binarySearchLeft + 1 + Math.pow(2, depth) - 1;
+
+  return sum;
+};
+
+// traverses from the top of the tree to the target node in the last layer of the tree
+const traverseToBSTTarget = (
+  node,
+  traversalLeft,
+  traversalRight,
+  binarySearchTarget
+) => {
+  // check if traversalLeft === traversalRight
+  if (traversalLeft === traversalRight) {
+    //    if so return the current node
+    return node;
+  }
+  // get the # of nodes in the range of TL and TR
+  let numberOfNodes = traversalRight - traversalLeft + 1;
+  // using the #ofNodes determine what the first element on the right side of the range is (remember moving left or right always cuts the search space in half in a tree)
+  let rightSideOfSearchSpace = numberOfNodes / 2 + traversalLeft;
+
+  // check if BST >= rightSideOfSearchSpace
+  if (binarySearchTarget >= rightSideOfSearchSpace) {
+    //    move the current node to the right + set traversalLeft = rightSideOfSearchSpace
+    return traverseToBSTTarget(
+      node.right,
+      rightSideOfSearchSpace,
+      traversalRight,
+      binarySearchTarget
+    );
+  } else {
+    //    move the current node to the left +  set traversalRight = rightSideOfSearchSpace - 1
+    return traverseToBSTTarget(
+      node.left,
+      traversalLeft,
+      rightSideOfSearchSpace - 1,
+      binarySearchTarget
+    );
+  }
+};
+
+// traverses left to the bottom most layer of the tree and return the depth
+const getLeftMostHeight = (node) => {
+  if (node === null) {
+    return 0;
+  }
+
+  return 1 + getLeftMostHeight(node.left);
+};
+
+// create a simple test case
+let fullTreeOne = new Node(10);
+fullTreeOne.left = new Node(6);
+
+console.log("Getnodecount: ", getNodeCount(fullTreeOne)); // E: 2, G: 2
+
+// root level
+let fullTreeTwo = new Node(10);
+// level 2^1
+fullTreeTwo.left = new Node(8);
+fullTreeTwo.right = new Node(7);
+// level 2^2
+fullTreeTwo.left.left = new Node(5);
+fullTreeTwo.left.right = new Node(4);
+fullTreeTwo.right.left = new Node(3);
+// fullTreeTwo.right.right = new Node(6);
+
+console.log("Getnodecount: ", getNodeCount(fullTreeTwo)); // E: 6, G: 6
