@@ -204,6 +204,8 @@ console.log(getRightSideView(newRoot));
 // Question: Given a complete binary tree, count the number of nodes. Keep in mind the bottom layer is filled from left to right.
 //           Not all nodes on the second to last layer need to have children.
 
+// IMP Notes: Last layer of a tree is N/2 nodes. The amount of nodes in a tree preceding any level is: 2^nextLevel - 1
+
 // Runtime complexity: O(log n)
 // Space complexity: O(log n)
 const getNodeCount = (root) => {
@@ -248,6 +250,7 @@ const getNodeCount = (root) => {
   }
 
   // return sum of nodes from 0 to depth - 1 + ( BSL + 1 )
+  // it is important to remember that the amount of nodes in any level can be summed as: 2^nextLevelDepth - 1
   let sum = binarySearchLeft + 1 + Math.pow(2, depth) - 1;
 
   return sum;
