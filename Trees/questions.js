@@ -320,3 +320,150 @@ fullTreeTwo.right.left = new Node(3);
 // fullTreeTwo.right.right = new Node(6);
 
 console.log("Getnodecount: ", getNodeCount(fullTreeTwo)); // E: 6, G: 6
+
+// validate a binary search tree
+
+// Runtime complexity: O(n)
+// Space complexity: O(n) worst case, if a tree is more complete then O(log n)
+const validateBST = (node, parentInformation, validTree) => {
+  // check if the current node is null
+  if (!node) {
+    return;
+  }
+
+  // check if the tree has been labeled invalid
+  if (validTree["valid"] == false) {
+    // stop function execution if so
+    return;
+  }
+
+  // validate the current node
+  validTree["valid"] = validateNode(node, parentInformation);
+
+  // prepate to move left
+  let newParentInformation = {
+    parentOfFirstOppositeSide: { value: undefined, side: undefined },
+    currentParent: { value: undefined, side: undefined },
+  };
+  if (parentInformation.parentOfFirstOppositeSide.side === "right") {
+    // fill in the parent on the opposite side information
+    newParentInformation.parentOfFirstOppositeSide.value =
+      parentInformation.parentOfFirstOppositeSide.value;
+    newParentInformation.parentOfFirstOppositeSide.side =
+      parentInformation.parentOfFirstOppositeSide.side;
+
+    // copy the current parent information
+    newParentInformation.currentParent.value = node.value;
+    newParentInformation.currentParent.side = "left";
+  } else {
+    if (parentInformation.currentParent.side === "right") {
+      newParentInformation.parentOfFirstOppositeSide.value =
+        parentInformation.currentParent.value;
+      newParentInformation.parentOfFirstOppositeSide.side =
+        parentInformation.currentParent.side;
+
+      // copy the current parent information
+      newParentInformation.currentParent.value = node.value;
+      newParentInformation.currentParent.side = "left";
+    } else {
+      newParentInformation.parentOfFirstOppositeSide.value = undefined;
+      newParentInformation.parentOfFirstOppositeSide.side = undefined;
+
+      // copy the current parent information
+      newParentInformation.currentParent.value = node.value;
+      newParentInformation.currentParent.side = "left";
+    }
+  }
+
+  // move left
+  validateBST(node.left, newParentInformation, validTree);
+
+  // prepare to move right
+  if (parentInformation.parentOfFirstOppositeSide.side === "left") {
+    newParentInformation.parentOfFirstOppositeSide.value =
+      parentInformation.parentOfFirstOppositeSide.value;
+    newParentInformation.parentOfFirstOppositeSide.side =
+      parentInformation.parentOfFirstOppositeSide.side;
+
+    // pass in the current node values
+    newParentInformation.currentParent.value = node.value;
+    newParentInformation.currentParent.side = "right";
+  } else {
+    if (parentInformation.currentParent.side == "left") {
+      newParentInformation.parentOfFirstOppositeSide.value =
+        parentInformation.currentParent.value;
+      newParentInformation.parentOfFirstOppositeSide.side =
+        parentInformation.currentParent.side;
+
+      // pass in the current node values
+      newParentInformation.currentParent.value = node.value;
+      newParentInformation.currentParent.side = "right";
+    } else {
+      newParentInformation.parentOfFirstOppositeSide.value = undefined;
+      newParentInformation.parentOfFirstOppositeSide.side = undefined;
+
+      // pass in the current node values
+      newParentInformation.currentParent.value = node.value;
+      newParentInformation.currentParent.side = "right";
+    }
+  }
+
+  // move right
+  validateBST(node.right, newParentInformation, validTree);
+};
+
+const validateNode = (node, info) => {
+  // check if validating the root node
+  if (info.parentOfFirstOppositeSide.side == undefined) {
+    // root node is always valid if it isn't undefined
+    return true;
+  }
+
+  if (
+    info.parentOfFirstOppositeSide.side == info.currentParent.side ||
+    info.parentOfFirstOppositeSide.side == undefined
+  ) {
+    // check the current node against its parent
+    if (info.currentParent.side == "left") {
+      return node.value < info.currentParent.value ? true : false;
+    } else {
+      return node.value > info.currentParent.value ? true : false;
+    }
+  } else {
+    // check the current node against its parent and the parent of the nearest opposite side
+    if (info.currentParent.side == "left") {
+      return node.value < info.currentParent.value &&
+        node.value > info.parentOfFirstOppositeSide.value
+        ? true
+        : false;
+    } else {
+      return node.value > info.currentParent.value &&
+        node.value < info.parentOfFirstOppositeSide.value
+        ? true
+        : false;
+    }
+  }
+};
+
+let validateBSTRoot = new Node(15);
+// left and right children
+validateBSTRoot.left = new Node(10);
+validateBSTRoot.right = new Node(20);
+
+// 3rd level children - left side of tree
+validateBSTRoot.left.left = new Node(8);
+validateBSTRoot.left.left.right = new Node(9);
+
+// 4th level childresn - left side of the tree
+validateBSTRoot.left.left.right.right = new Node(10);
+
+let valid = { valid: true };
+validateBST(
+  validateBSTRoot,
+  {
+    parentOfFirstOppositeSide: { value: undefined, side: undefined },
+    currentParent: { value: undefined, side: undefined },
+  },
+  valid
+);
+console.log("Is the binary tree a BST: ", valid); // E: valid to be false;  G: Valid is false
