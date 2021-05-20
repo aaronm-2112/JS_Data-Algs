@@ -5,13 +5,13 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "easy": "tsc && node easy.js"
+    "easy": "tsc && node easy.js",
+    "mem": "tsc && node dynamic-programming.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {},
   "devDependencies": {
-    "typescript": "^4.0.3"
+    "typescript": "^4.2.4"
   }
 }

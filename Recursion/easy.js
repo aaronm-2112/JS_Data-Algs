@@ -125,8 +125,8 @@ function fibbtm(value) {
     return fibValue;
 }
 console.log("Fibbtm: " + fibbtm(7));
-// Time: O( log s)
-// Space: O(log s)
+// Time: O( s)
+// Space: O( log s)
 function reverse(value) {
     if (value.length === 1)
         return value;
@@ -137,7 +137,7 @@ function reverse(value) {
 }
 console.log("reverse of abc: " + reverse("abc"));
 // Test whether a string is a palindrome
-// Time: O(log s)
+// Time: O(s)
 // Space: O(log s)
 function isPalindrome(value) {
     var reversedValue = reverse(value);

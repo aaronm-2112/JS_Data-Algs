@@ -1,45 +1,4 @@
-//calculate the number of ways to climb steps if you can take, 1,2, or 3 steps at a time
-//utilizes a memoization based, top down approach
-//Complexity: 
-//   Time: O(n)
-//   Space: O(n)
-function steps(n: number) {
-  //create a dictionary that stores the number of possibilities for each step
-  let possibilities: Record<number, number> = {};
-
-  //add the precomputed base case possibilities
-  possibilities[1] = 1;
-  possibilities[2] = 3;
-  possibilities[3] = 7;
-
-  let numberOfPossibilites = computeSteps(n, possibilities);
-
-  console.log(numberOfPossibilites);
-}
-
-function computeSteps(n: number, possibilities: Record<number, number>) {
-  //check if possibilities does not have a computation for n readily accessible
-  if (!possibilities[n]) {
-    //compute possibilities at n
-    possibilities[n] = computeSteps(n - 3, possibilities) + computeSteps(n - 2, possibilities) + computeSteps(n - 1, possibilities) + 3;
-  }
-
-  //else return the computed value for n
-  return possibilities[n];
-
-}
-
-//testing
-steps(1);
-steps(2);
-steps(3);
-steps(4);
-steps(5);
-steps(6);
-steps(30);
-
-
-// TODO: Convert the solution to typescript 
+// TODO: Convert the solution to typescript
 
 //second recursion question:
 //   Create an algorithm that allows a robot to get to the bottom right of a maze.
@@ -62,7 +21,7 @@ steps(30);
 //     "true": false
 //   };
 
-//   //call findRobotPath(rows, columns, maze, directions, position, direction); 
+//   //call findRobotPath(rows, columns, maze, directions, position, direction);
 //   //             where maze: number = [][], directions: Enum = [], badPath = boolean, position: number = [x,y], direction = ENUM(RIGHT, LEFT)
 //   findRobotPath(rows, columns, maze, directions, direction, directionsEnum, position, foundPath);
 
@@ -95,7 +54,7 @@ steps(30);
 //     return;
 //   }
 
-//   //DFS analog to search throught the maze  below: 
+//   //DFS analog to search throught the maze  below:
 
 //   //set direction to down
 //   direction = directionsEnum.DOWN;
@@ -103,7 +62,6 @@ steps(30);
 //   directions.push(direction);
 //   //move down
 //   findRobotPath(rows, columns, maze, directions, direction, directionsEnum, [position[0] + 1, position[1]], foundPath); //going down
-
 
 //   if (foundPath["true"]) {
 //     return;
@@ -118,7 +76,7 @@ steps(30);
 
 // }
 
-// //testing: 
+// //testing:
 // //robot path finding with all good cells
 // console.log(robotPath(3, 4, [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]]));
 // console.log(robotPath(4, 4, [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]]));
@@ -128,8 +86,3 @@ steps(30);
 // console.log(robotPath(3, 4, [[1, 1, 1, 1], [0, 1, 1, 1], [1, 1, 1, 1]])); //E:[r,d,d,r,r] G:[r,d,d,r,r]
 // console.log(robotPath(3, 4, [[1, 1, 1, 1], [1, 1, 1, 1], [0, 1, 1, 1]])); //E: [d,r,d,r,r] G: [d,r,d,r,r]
 // console.log(robotPath(4, 4, [[0, 0, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]])); //E: empty collection G: Empty collection
-
-
-
-
-
