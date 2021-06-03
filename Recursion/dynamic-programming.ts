@@ -122,18 +122,29 @@ const minCostClimbingStairsBottomUpOptimized = (cost: Array<number>) => {
 // base case           = r < 0 || r > N || c < 0 || c > N = 0
 // directions = [[-2,-1], [-2, 1], [-1,2], [1,2], [2,1], [2,-1], [1,-2], [-1,-2]]
 
-// time: O(8^k)
-// space: O(8^k)
+// time: O(8^k) when not memoized
+// time: O(N^2 * k) when memoized b/c we traverse all of the board k times (more or less)
+// space: O(8^k) when not memoized
+// space: O(N^2 * K) when memoized b;c this is the size of the memoization object at each depth
 const knightProbability = (
   k: number,
   row: number,
   col: number,
-  n: number
+  n: number,
+  mem: { [key: string]: number[][] }
 ): number => {
   // out of bounds
   if (row < 0 || row >= n || col < 0 || col >= n) return 0;
   // no more steps
   if (k == 0) return 1;
+
+  // check if we need to define the memoized chessboard at this level of k
+  if (mem[k] === undefined) {
+    mem[k] = createChessBoard(n);
+  }
+
+  // check if the probability at k and this position is already calculated
+  if (mem[k][row][col]) return mem[k][row][col];
 
   let directions = [
     [-2, -1],
@@ -146,13 +157,90 @@ const knightProbability = (
     [-1, -2],
   ];
 
-  let probability = 0;
-
   directions.forEach((dir) => {
-    probability += knightProbability(k - 1, row + dir[0], col + dir[1], n) / 8;
+    let nextRow = row + dir[0];
+    let nextCol = col + dir[1];
+
+    mem[k][row][col] += knightProbability(k - 1, nextRow, nextCol, n, mem) / 8;
   });
 
-  return probability;
+  return mem[k][row][col];
 };
 
-console.log(knightProbability(2, 2, 3, 6));
+function createChessBoard(n: number) {
+  let board: any[][] = [];
+
+  for (let i = 0; i < n; i++) {
+    board[i] = [];
+    for (let j = 0; j < n; j++) {
+      board[i][j] = 0;
+    }
+  }
+
+  return board;
+}
+
+console.log(knightProbability(5, 2, 3, 6, {}));
+
+// a setup function that creates our dp
+const knightProbAlt = function (
+  k: number,
+  row: number,
+  col: number,
+  n: number
+) {
+  // each step k is a depth that stores a 2D array of computed probabilities
+  const dp = new Array(k + 1).fill(0).map(() => {
+    return new Array(n).fill(0).map(() => {
+      return new Array(n).fill(undefined);
+    });
+  });
+
+  return recurseKnight(k, row, col, n, dp);
+};
+
+let directions = [
+  [-2, -1],
+  [-2, 1],
+  [-1, 2],
+  [1, 2],
+  [2, 1],
+  [2, -1],
+  [1, -2],
+  [-1, -2],
+];
+
+// the recursive, memoized solution for calculating our probabilities
+function recurseKnight(
+  k: number,
+  row: number,
+  col: number,
+  n: number,
+  dp: any[][][]
+) {
+  // check if out of bounds
+  if (row < 0 || col < 0 || row >= n || col >= n) return 0;
+  // on valid positioon
+  if (k === 0) return 1;
+
+  // check the stored probability
+  if (dp[k][row][col] !== undefined) return dp[k][row][col];
+
+  let currentProbability: number = 0;
+
+  // traverse through all the directions for the current positions
+  directions.forEach((dir) => {
+    let nextRow = row + dir[0];
+    let nextCol = col + dir[1];
+
+    currentProbability += recurseKnight(k - 1, nextRow, nextCol, n, dp) / 8;
+  });
+
+  dp[k][row][col] = currentProbability;
+
+  return dp[k][row][col];
+}
+
+console.log(knightProbAlt(5, 2, 3, 6));
+
+function knightProbabilityBottomUp() {}

@@ -6,12 +6,12 @@
 //   Space: O(n)
 function steps(n) {
     //create a dictionary that stores the number of possibilities for each step
-    var possibilities = {};
+    let possibilities = {};
     //add the precomputed base case possibilities
     possibilities[1] = 1;
     possibilities[2] = 3;
     possibilities[3] = 7;
-    var numberOfPossibilites = computeSteps(n, possibilities);
+    let numberOfPossibilites = computeSteps(n, possibilities);
     console.log(numberOfPossibilites);
 }
 function computeSteps(n, possibilities) {
@@ -41,14 +41,14 @@ steps(30);
 // Your first setp can either be the first or second step.
 // Runtime complexity: O(2^N) - memoized: O(N)
 // Space complexity: O(N)     - memoized: O(N)
-var minCostOfClimbingStairs = function (cost) {
-    var n = cost.length;
+const minCostOfClimbingStairs = (cost) => {
+    const n = cost.length;
     // for memoizing
-    var mem = [];
+    let mem = [];
     // return the min cost of getting to the end through either the penultimate or antepenultimate step
     return Math.min(minCost(n - 1, cost, mem), minCost(n - 2, cost, mem));
 };
-var minCost = function (index, cost, memoizedArray) {
+const minCost = (index, cost, memoizedArray) => {
     if (index < 0)
         return 0;
     if (index === 0 || index === 1)
@@ -63,10 +63,10 @@ var minCost = function (index, cost, memoizedArray) {
 console.log(minCostOfClimbingStairs([3, 4, 5, 6, 7, 11]));
 // Runtime: O(n)
 // Space: O(n)
-var minCostClimbingStairsBottomUp = function (cost) {
-    var dp = [];
-    var n = cost.length;
-    for (var i = 0; i < n; i++) {
+const minCostClimbingStairsBottomUp = (cost) => {
+    const dp = [];
+    const n = cost.length;
+    for (let i = 0; i < n; i++) {
         if (i < 2) {
             dp[i] = cost[i];
         }
@@ -76,12 +76,12 @@ var minCostClimbingStairsBottomUp = function (cost) {
 };
 // runtime: O(n)
 // space: O(1)
-var minCostClimbingStairsBottomUpOptimized = function (cost) {
-    var n = cost.length;
-    var dpOne = cost[0];
-    var dpTwo = cost[1];
-    for (var i = 2; i < n; i++) {
-        var current = cost[i] + Math.min(dpOne, dpTwo);
+const minCostClimbingStairsBottomUpOptimized = (cost) => {
+    const n = cost.length;
+    let dpOne = cost[0];
+    let dpTwo = cost[1];
+    for (let i = 2; i < n; i++) {
+        const current = cost[i] + Math.min(dpOne, dpTwo);
         dpOne = dpTwo;
         dpTwo = current;
     }
@@ -94,14 +94,23 @@ var minCostClimbingStairsBottomUpOptimized = function (cost) {
 // recurrence relation = KnightP(k,r,c) = Foreach K, (x,y)ElemOf(Directions) knightP(k-1, r+x, c+y)/8
 // base case           = r < 0 || r > N || c < 0 || c > N = 0
 // directions = [[-2,-1], [-2, 1], [-1,2], [1,2], [2,1], [2,-1], [1,-2], [-1,-2]]
-var knightProbability = function (k, row, col, n) {
+// time: O(8^k)
+// space: O(8^k)
+const knightProbability = (k, row, col, n, mem) => {
     // out of bounds
     if (row < 0 || row >= n || col < 0 || col >= n)
         return 0;
     // no more steps
     if (k == 0)
         return 1;
-    var directions = [
+    // check if we need to define the memoized chessboard at this level of k
+    if (mem[k] === undefined) {
+        mem[k] = createChessBoard(n);
+    }
+    // check if the probability at k and this position is already calculated
+    if (mem[k][row][col])
+        return mem[k][row][col];
+    let directions = [
         [-2, -1],
         [-2, 1],
         [-1, 2],
@@ -111,10 +120,63 @@ var knightProbability = function (k, row, col, n) {
         [1, -2],
         [-1, -2],
     ];
-    var probability = 0;
-    directions.forEach(function (dir) {
-        probability += knightProbability(k - 1, row + dir[0], col + dir[1], n) / 8;
+    directions.forEach((dir) => {
+        let nextRow = row + dir[0];
+        let nextCol = col + dir[1];
+        mem[k][row][col] += knightProbability(k - 1, nextRow, nextCol, n, mem) / 8;
     });
-    return probability;
+    return mem[k][row][col];
 };
-console.log(knightProbability(2, 2, 3, 6));
+function createChessBoard(n) {
+    let board = [];
+    for (let i = 0; i < n; i++) {
+        board[i] = [];
+        for (let j = 0; j < n; j++) {
+            board[i][j] = 0;
+        }
+    }
+    return board;
+}
+console.log(knightProbability(5, 2, 3, 6, {}));
+// a setup function that creates our dp
+const knightProbAlt = function (k, row, col, n) {
+    // each step k is a depth that stores a 2D array of computed probabilities
+    const dp = new Array(k + 1).fill(0).map(() => {
+        return new Array(n).fill(0).map(() => {
+            return new Array(n).fill(undefined);
+        });
+    });
+    return recurseKnight(k, row, col, n, dp);
+};
+let directions = [
+    [-2, -1],
+    [-2, 1],
+    [-1, 2],
+    [1, 2],
+    [2, 1],
+    [2, -1],
+    [1, -2],
+    [-1, -2],
+];
+// the recursive, memoized solution for calculating our probabilities
+function recurseKnight(k, row, col, n, dp) {
+    // check if out of bounds
+    if (row < 0 || col < 0 || row >= n || col >= n)
+        return 0;
+    // on valid positioon
+    if (k === 0)
+        return 1;
+    // check the stored probability
+    if (dp[k][row][col] !== undefined)
+        return dp[k][row][col];
+    let currentProbability = 0;
+    // traverse through all the directions for the current positions
+    directions.forEach((dir) => {
+        let nextRow = row + dir[0];
+        let nextCol = col + dir[1];
+        currentProbability += recurseKnight(k - 1, nextRow, nextCol, n, dp) / 8;
+    });
+    dp[k][row][col] = currentProbability;
+    return dp[k][row][col];
+}
+console.log(knightProbAlt(5, 2, 3, 6));

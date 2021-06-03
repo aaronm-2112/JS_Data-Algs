@@ -15,8 +15,8 @@ console.log("Power top: " + powertop(2, 4));
 // Big O(exponent)
 // Space: O(1)
 function powerbtm(base, exponent) {
-    var result = 1;
-    for (var i = 1; i <= exponent; i++) {
+    let result = 1;
+    for (let i = 1; i <= exponent; i++) {
         result *= base;
     }
     return result;
@@ -42,8 +42,8 @@ function factorialbtm(value) {
     if (value <= 1) {
         return 1;
     }
-    var result = 1;
-    for (var i = 2; i <= value; i++) {
+    let result = 1;
+    for (let i = 2; i <= value; i++) {
         result *= i;
     }
     return result;
@@ -57,18 +57,18 @@ console.log("Factorial btm: " + factorialbtm(4));
 // Time: O(values.length)
 // Space: O(values.length)
 function productOfArraytop(values) {
-    var length = values.length;
-    var lastPosition = length - 1;
+    let length = values.length;
+    let lastPosition = length - 1;
     if (length === 1) {
         return values[lastPosition];
     }
-    var currentValue = values[lastPosition];
+    let currentValue = values[lastPosition];
     return currentValue * productOfArraytop(values.slice(0, length - 1));
 }
 console.log(productOfArraytop([2, 2, 4, 2]));
 function productOfArraybtm(values) {
-    var product = 1;
-    for (var position = 0; position < values.length; position++) {
+    let product = 1;
+    for (let position = 0; position < values.length; position++) {
         product *= values[position];
     }
     return product;
@@ -114,11 +114,11 @@ console.log("fibtopmem: " + fibtopmem(7, []));
 function fibbtm(value) {
     if (value <= 2)
         return 1;
-    var fibValueBuckets = {};
+    const fibValueBuckets = {};
     fibValueBuckets[1] = 1;
     fibValueBuckets[2] = 1;
-    var fibValue = 0;
-    for (var i = 3; i <= value; i++) {
+    let fibValue = 0;
+    for (let i = 3; i <= value; i++) {
         fibValue = fibValueBuckets[i - 2] + fibValueBuckets[i - 1];
         fibValueBuckets[i] = fibValue;
     }
@@ -130,9 +130,9 @@ console.log("Fibbtm: " + fibbtm(7));
 function reverse(value) {
     if (value.length === 1)
         return value;
-    var mid = value.length / 2;
-    var left = reverse(value.slice(0, mid));
-    var right = reverse(value.slice(mid));
+    let mid = value.length / 2;
+    let left = reverse(value.slice(0, mid));
+    let right = reverse(value.slice(mid));
     return right + left;
 }
 console.log("reverse of abc: " + reverse("abc"));
@@ -140,7 +140,7 @@ console.log("reverse of abc: " + reverse("abc"));
 // Time: O(s)
 // Space: O(log s)
 function isPalindrome(value) {
-    var reversedValue = reverse(value);
+    const reversedValue = reverse(value);
     return value === reversedValue;
 }
 console.log("abc is a palindrome: " + isPalindrome('abc'));
@@ -149,11 +149,10 @@ console.log("tacocat is a palindrome: " + isPalindrome('tacocat'));
 // Output: Single boolean value 
 // Assumptions: The generic function returns true or false and throws no errors 
 // a generic function
-var isOdd = function (val) { return val % 2 !== 0; };
+const isOdd = (val) => val % 2 !== 0;
 // Time: O(ng) where n is linear growth in relation to the number array and g is some generic function for every n 
 // Space: O(n + g) there are at most n stacks as well as however many stacks for the generic function
-function someRecursive(array, generic, pass) {
-    if (pass === void 0) { pass = { passing: false }; }
+function someRecursive(array, generic, pass = { passing: false }) {
     // add whatever parameters you deem necessary - good luck!
     if (!array.length)
         return false;
@@ -174,7 +173,7 @@ console.log(Array.prototype.concat([8], [[8, 3, 2], [4, 3, 2]]));
 // Space: O(d)
 function flatten(input) {
     // create an output array 
-    var output = [];
+    const output = [];
     // call the flatten helper with a outputArray parameter 
     flattenHelper(input, output);
     // return the output array
@@ -186,7 +185,7 @@ function flattenHelper(input, output) {
         return;
     }
     // iterate through the input
-    input.forEach(function (elem) {
+    input.forEach(elem => {
         // check if the current element is an array 
         if (elem.length) {
             // if so call flattenHelper on the array
@@ -209,7 +208,7 @@ function capitalizeFirst(input) {
     if (!input.length) {
         return [];
     }
-    var output = [];
+    const output = [];
     capitalizeFirstHelper(input, output);
     return output;
 }
@@ -217,8 +216,8 @@ function capitalizeFirstHelper(input, output) {
     if (!input.length) {
         return;
     }
-    var lastInputElem = input[input.length - 1];
-    var upperCaseElem = lastInputElem[0].toUpperCase() + lastInputElem.substring(1);
+    let lastInputElem = input[input.length - 1];
+    let upperCaseElem = lastInputElem[0].toUpperCase() + lastInputElem.substring(1);
     output.unshift(upperCaseElem);
     input.pop();
     capitalizeFirstHelper(input, output);
@@ -228,7 +227,7 @@ function capitalizeWords(input) {
     if (!input.length) {
         return [];
     }
-    var output = [];
+    const output = [];
     capitalizeWordsHelper(input, output);
     return output;
 }
@@ -236,7 +235,7 @@ function capitalizeWordsHelper(input, output) {
     if (!input.length) {
         return;
     }
-    var upperCaseElem = input[input.length - 1].toUpperCase();
+    let upperCaseElem = input[input.length - 1].toUpperCase();
     output.unshift(upperCaseElem);
     input.pop();
     capitalizeWordsHelper(input, output);
