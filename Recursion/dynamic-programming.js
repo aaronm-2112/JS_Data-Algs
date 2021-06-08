@@ -94,8 +94,10 @@ const minCostClimbingStairsBottomUpOptimized = (cost) => {
 // recurrence relation = KnightP(k,r,c) = Foreach K, (x,y)ElemOf(Directions) knightP(k-1, r+x, c+y)/8
 // base case           = r < 0 || r > N || c < 0 || c > N = 0
 // directions = [[-2,-1], [-2, 1], [-1,2], [1,2], [2,1], [2,-1], [1,-2], [-1,-2]]
-// time: O(8^k)
-// space: O(8^k)
+// time: O(8^k) when not memoized
+// time: O(N^2 * k) when memoized b/c we traverse all of the board k times (more or less)
+// space: O(8^k) when not memoized
+// space: O(N^2 * K) when memoized b;c this is the size of the memoization object at each depth
 const knightProbability = (k, row, col, n, mem) => {
     // out of bounds
     if (row < 0 || row >= n || col < 0 || col >= n)
@@ -179,4 +181,72 @@ function recurseKnight(k, row, col, n, dp) {
     dp[k][row][col] = currentProbability;
     return dp[k][row][col];
 }
-console.log(knightProbAlt(5, 2, 3, 6));
+console.log(knightProbAlt(3, 2, 3, 6));
+function createChessBoardBtmUp(n) {
+    let board = [];
+    for (let i = 0; i < n; i++) {
+        board[i] = [];
+        for (let j = 0; j < n; j++) {
+            board[i][j] = 1;
+        }
+    }
+    return board;
+}
+const knightProbabilityBottomUp = (k, row, col, n) => {
+    const dp = new Array(k + 1).fill(0).map(() => {
+        return new Array(n).fill(0).map(() => {
+            return new Array(n).fill(0);
+        });
+    });
+    dp[0][row][col] = 1;
+    for (let step = 1; step <= k; step++) {
+        for (let currRow = 0; currRow < n; currRow++) {
+            for (let currCol = 0; currCol < n; currCol++) {
+                for (let i = 0; i < directions.length; i++) {
+                    const dir = directions[i];
+                    const prevRow = dir[0] + currRow;
+                    const prevCol = dir[1] + currCol;
+                    // check that we are inbounds
+                    if (prevRow >= 0 && prevRow < n && prevCol >= 0 && prevCol < n) {
+                        dp[step][currRow][currCol] += dp[step - 1][prevRow][prevCol] / 8;
+                    }
+                }
+            }
+        }
+    }
+    // return dp[row][col];
+    let res = 0;
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+            res += dp[k][i][j];
+        }
+    }
+    return res;
+};
+console.log(knightProbabilityBottomUp(3, 2, 3, 6));
+const knightProbBtmUpAlt = (k, row, col, n) => {
+    const dp = {
+        0: createChessBoardBtmUp(n),
+        1: createChessBoard(n),
+        2: createChessBoard(n),
+        3: createChessBoard(n),
+    };
+    // console.log(dp);
+    for (let step = 1; step <= k; step++) {
+        for (let currRow = 0; currRow < n; currRow++) {
+            for (let currCol = 0; currCol < n; currCol++) {
+                for (let i = 0; i < directions.length; i++) {
+                    const dir = directions[i];
+                    const prevRow = dir[0] + currRow;
+                    const prevCol = dir[1] + currCol;
+                    // check that we are inbounds
+                    if (prevRow >= 0 && prevRow < n && prevCol >= 0 && prevCol < n) {
+                        dp[step][currRow][currCol] += dp[step - 1][prevRow][prevCol] / 8;
+                    }
+                }
+            }
+        }
+    }
+    return dp[k][row][col];
+};
+console.log(knightProbBtmUpAlt(3, 2, 3, 6));
