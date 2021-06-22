@@ -256,19 +256,22 @@ function createChessBoardBtmUp(n: number) {
   return board;
 }
 
+// time complexity: O(k * N^2)
+// space complexity: O(N^2)
 const knightProbabilityBottomUp = (
   k: number,
   row: number,
   col: number,
   n: number
 ) => {
-  const dp = new Array(k + 1).fill(0).map(() => {
-    return new Array(n).fill(0).map(() => {
-      return new Array(n).fill(0);
-    });
+  let prevDp = new Array(n).fill(0).map(() => {
+    return new Array(n).fill(0);
+  });
+  let currDp = new Array(n).fill(0).map(() => {
+    return new Array(n).fill(0);
   });
 
-  dp[0][row][col] = 1;
+  prevDp[row][col] = 1;
 
   for (let step = 1; step <= k; step++) {
     for (let currRow = 0; currRow < n; currRow++) {
@@ -280,19 +283,21 @@ const knightProbabilityBottomUp = (
 
           // check that we are inbounds
           if (prevRow >= 0 && prevRow < n && prevCol >= 0 && prevCol < n) {
-            dp[step][currRow][currCol] += dp[step - 1][prevRow][prevCol] / 8;
+            currDp[currRow][currCol] += prevDp[prevRow][prevCol] / 8;
           }
         }
       }
     }
+    prevDp = currDp;
+    currDp = new Array(n).fill(0).map(() => {
+      return new Array(n).fill(0);
+    });
   }
-
-  // return dp[row][col];
 
   let res = 0;
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
-      res += dp[k][i][j];
+      res += prevDp[i][j];
     }
   }
 
@@ -301,15 +306,15 @@ const knightProbabilityBottomUp = (
 
 console.log(knightProbabilityBottomUp(3, 2, 3, 6));
 
+// time complexity: O(k * N^2)
+// space complexity: O(N^2)
 const knightProbBtmUpAlt = (k: number, row: number, col: number, n: number) => {
-  const dp: { [idx: number]: number[][] } = {
-    0: createChessBoardBtmUp(n) as number[][],
-    1: createChessBoard(n) as number[][],
-    2: createChessBoard(n) as number[][],
-    3: createChessBoard(n) as number[][],
-  };
-
-  // console.log(dp);
+  let prevDp = new Array(n).fill(0).map(() => {
+    return new Array(n).fill(1);
+  });
+  let currDp = new Array(n).fill(0).map(() => {
+    return new Array(n).fill(0);
+  });
 
   for (let step = 1; step <= k; step++) {
     for (let currRow = 0; currRow < n; currRow++) {
@@ -318,17 +323,20 @@ const knightProbBtmUpAlt = (k: number, row: number, col: number, n: number) => {
           const dir = directions[i];
           const prevRow = dir[0] + currRow;
           const prevCol = dir[1] + currCol;
-
-          // check that we are inbounds
+          // check if we are on an odd step
           if (prevRow >= 0 && prevRow < n && prevCol >= 0 && prevCol < n) {
-            dp[step][currRow][currCol] += dp[step - 1][prevRow][prevCol] / 8;
+            currDp[currRow][currCol] += prevDp[prevRow][prevCol] / 8;
           }
         }
       }
     }
+    prevDp = currDp;
+    currDp = new Array(n).fill(0).map(() => {
+      return new Array(n).fill(0);
+    });
   }
 
-  return dp[k][row][col];
+  return prevDp[row][col];
 };
 
 console.log(knightProbBtmUpAlt(3, 2, 3, 6));
