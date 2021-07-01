@@ -26,6 +26,8 @@ function isPalindrome(string: string) {
 
 // Time: O(n^2)
 // Space: O(n)
+// A cleaner solution would be to pass in the indexes for searching for an odd or even palindrome directly into the palindrome function.
+// This would get more re-use from the inside out palindromic search loop I perform twice in the palindrome function.
 function longestPalindromicSubstring(string: string) {
   // set currentPalindromeLength = -1
   let maxPalindromeLength = -1;
@@ -48,6 +50,7 @@ function longestPalindromicSubstring(string: string) {
 }
 
 // inside out palindrome function -- returns the start and end index of our palindrome
+
 function palindrome(str: string, idx: number): number[] {
   let oddStartPointer = 0;
   let oddEndPointer = 0;
