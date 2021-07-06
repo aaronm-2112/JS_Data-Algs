@@ -50,18 +50,18 @@ class UndirectedGraph extends Graph {
     if (this.adjacencyList[vertex1] && this.adjacencyList[vertex2]) {
       //find vertex1 and remove the vertex2 element from the list
       this.adjacencyList[vertex1] = this.adjacencyList[vertex1].filter(
-        v => v !== vertex2
+        (v) => v !== vertex2
       );
 
       this.adjacencyList[vertex2] = this.adjacencyList[vertex2].filter(
-        v => v !== vertex1
+        (v) => v !== vertex1
       );
     }
   }
 
   removeVertex(vertex) {
     //sever all connections, both ways
-    this.adjacencyList[vertex].forEach(v => {
+    this.adjacencyList[vertex].forEach((v) => {
       this.removeEdge(vertex, v);
     });
 
@@ -75,7 +75,7 @@ class UndirectedGraph extends Graph {
     let currVertex = vertex;
     console.log(currVertex);
     visited.push(currVertex);
-    this.adjacencyList[currVertex].forEach(v => {
+    this.adjacencyList[currVertex].forEach((v) => {
       if (!visited.includes(v)) {
         this.scanNodes(v, visited);
       }
@@ -99,7 +99,7 @@ class UndirectedGraph extends Graph {
       }
       visited[vertex] = true;
       result.push(vertex);
-      adjacencyList[vertex].forEach(neighbor => {
+      adjacencyList[vertex].forEach((neighbor) => {
         if (!visisted[neighbor]) {
           return dfs(neighbor);
         }
@@ -124,7 +124,7 @@ class UndirectedGraph extends Graph {
       if (!visited[vertex]) {
         visited[vertex] = true;
         result.push(vertex);
-        this.adjacencyList[vertex].forEach(neighbor => {
+        this.adjacencyList[vertex].forEach((neighbor) => {
           unvisited.push(neighbor);
         });
       }
@@ -144,7 +144,7 @@ class UndirectedGraph extends Graph {
     while (stack.length) {
       currentVertex = stack.pop();
       result.push(currentVertex);
-      this.adjacencyList[currentVertex].forEach(neighbor => {
+      this.adjacencyList[currentVertex].forEach((neighbor) => {
         if (!visited[neighbor]) {
           visited[neighbor] = true;
           stack.push(neighbor);
@@ -166,7 +166,7 @@ class UndirectedGraph extends Graph {
     while (queue.length) {
       vertex = queue.shift();
       result.push(vertex);
-      this.adjacencyList[vertex].forEach(neighbor => {
+      this.adjacencyList[vertex].forEach((neighbor) => {
         if (!visited[neighbor]) {
           visited[neighbor] = true;
           queue.push(neighbor);
@@ -194,7 +194,7 @@ class UndirectedGraph extends Graph {
       }
 
       //add each of currs neighbors to the queue
-      this.adjacencyList[curr].forEach(neighbor => {
+      this.adjacencyList[curr].forEach((neighbor) => {
         if (!visited[neighbor]) {
           queue.push(neighbor);
         }
