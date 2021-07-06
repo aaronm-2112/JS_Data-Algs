@@ -18,20 +18,8 @@ export class Node {
   depthFirstSearch(array: string[]) {
     array.push(this.name);
     for (var child of this.children) {
-      this.inOrderDFS(array, child);
+      child.depthFirstSearch(array);
     }
     return array;
-  }
-
-  inOrderDFS(array: string[], node: Node): void {
-    array.push(node.name);
-
-    if (!node.children.length) {
-      return;
-    }
-
-    for (var child of node.children) {
-      this.inOrderDFS(array, child);
-    }
   }
 }
