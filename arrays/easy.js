@@ -112,6 +112,108 @@ function trapRainWater(nums) {
     }
     return trappedUnitsOfWater;
 }
+// 1D Array question
+// given an array of integers sorted in ascending order,
+// return the starting and ending index of a given target value in an array
+// solution needs to be O(log N)
+// O(log n) in best case but all dupes would make this runtime O(n)
+function getTargetIndices(array, target) {
+    var left = 0;
+    var right = array.length - 1;
+    var indices = [];
+    while (left <= right) {
+        var mid = Math.floor((left + right) / 2);
+        if (array[mid] === target) {
+            var startIndex = mid - 1;
+            while (startIndex >= left) {
+                if (array[startIndex] !== target) {
+                    break;
+                }
+                startIndex -= 1;
+            }
+            // add the start index to the indices
+            indices.push(startIndex + 1);
+            var endIndex = mid + 1;
+            while (endIndex <= right) {
+                if (array[endIndex] !== target) {
+                    break;
+                }
+                endIndex += 1;
+            }
+            // add the end index to the indices
+            indices.push(endIndex - 1);
+            // return the indices to the user
+            return indices;
+        }
+        else if (array[mid] < target) {
+            left = mid + 1;
+        }
+        else {
+            right = mid - 1;
+        }
+    }
+    return [-1, -1];
+}
+// O(log n ) in all cases
+// space: O(1)
+function getTargetIndicesBS(array, target) {
+    if (array.length === 0)
+        return [-1, -1];
+    // binary search for an index that holds our target value -- may return -1 if the target isn't in the array
+    var firstPos = binarySearch(array, 0, array.length - 1, target);
+    if (firstPos === -1)
+        return [-1, -1];
+    var leftPointer = firstPos - 1;
+    var tempLeftPointer = leftPointer;
+    while (leftPointer >= 0 && array[leftPointer] === target) {
+        tempLeftPointer = leftPointer;
+        leftPointer = binarySearch(array, 0, leftPointer - 1, target);
+    }
+    if (leftPointer === -1) {
+        leftPointer = tempLeftPointer;
+    }
+    else {
+        leftPointer += 1;
+    }
+    var rightPointer = firstPos + 1;
+    var tempRightPointer = rightPointer;
+    while (rightPointer < array.length - 1 &&
+        array[rightPointer] === target &&
+        rightPointer >= 0) {
+        tempRightPointer = rightPointer;
+        rightPointer = binarySearch(array, rightPointer + 1, array.length - 1, target);
+    }
+    if (rightPointer === -1) {
+        rightPointer = tempRightPointer;
+    }
+    else {
+        rightPointer -= 1;
+    }
+    return [leftPointer, rightPointer];
+}
+function binarySearch(array, left, right, target) {
+    if (left > right) {
+        return -1;
+    }
+    var mid = Math.floor((left + right) / 2);
+    if (array[mid] === target) {
+        return mid;
+    }
+    else if (array[mid] < target) {
+        return binarySearch(array, mid + 1, right, target);
+    }
+    else {
+        return binarySearch(array, left, mid - 1, target);
+    }
+}
+console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 4)); // E: [7,7] G: [7,7]
+console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 3)); // E: [5,6] G: [5,6]
+console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 1)); // E: [0,2] G: [0,2]
+console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 6)); // E: [9,10] G: [9,10]
+// the solution for left is off by one
+console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 1)); // E: [0,2] G: [0,2]
+console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 3)); // E: [5,6] G: [5,6]
+console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 4)); // E: [7,7] G: [7,7]
 // console.log(trapRainWater([1, 0, 2, 0, 1, 0, 2])) // E: 6 G: 6
 // console.log(trapRainWater([4, 2, 0, 3, 2, 5]))    // E: 9 G: 6
 // console.log(trapRainWater([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]))  // E: 6  G: 6
@@ -410,103 +512,64 @@ function wallsAndGatesDFS(grid, row, col, step) {
         wallsAndGatesDFS(grid, row + currentDir[0], col + currentDir[1], step++);
     }
 }
-// 1D Array question
-// given an array of integers sorted in ascending order,
-// return the starting and ending index of a given target value in an array
-// solution needs to be O(log N)
-// O(log n) in best case but all dupes would make this runtime O(n)
-function getTargetIndices(array, target) {
-    var left = 0;
-    var right = array.length - 1;
-    var indices = [];
-    while (left <= right) {
-        var mid = Math.floor((left + right) / 2);
-        if (array[mid] === target) {
-            var startIndex = mid - 1;
-            while (startIndex >= left) {
-                if (array[startIndex] !== target) {
-                    break;
-                }
-                startIndex -= 1;
+// count the length of all rivers
+// array can be of different lengths
+function riverSizes(matrix) {
+    // Write your code here.
+    var visitedLand = new Array();
+    for (var i = 0; i < matrix.length; i++) {
+        visitedLand.push(matrix[i].slice().fill(0));
+    }
+    var riverLengths = [];
+    for (var row = 0; row < matrix.length; row++) {
+        for (var col = 0; col < matrix[row].length; col++) {
+            if (matrix[row][col] === 1 && visitedLand[row][col] !== 1) {
+                var riverLength = getRiverLength(matrix, row, col, visitedLand);
+                riverLengths.push(riverLength);
             }
-            // add the start index to the indices
-            indices.push(startIndex + 1);
-            var endIndex = mid + 1;
-            while (endIndex <= right) {
-                if (array[endIndex] !== target) {
-                    break;
+        }
+    }
+    return riverLengths;
+}
+function getRiverLength(land, row, col, visitedLand) {
+    var length = 0;
+    var directions = [
+        [-1, 0],
+        [0, 1],
+        [1, 0],
+        [0, -1],
+    ];
+    var queue = [];
+    queue.push([row, col]);
+    length++;
+    visitedLand[row][col] = 1;
+    var _loop_1 = function () {
+        var position = queue.pop();
+        var currentRow = position[0];
+        var currentCol = position[1];
+        directions.forEach(function (direction) {
+            var nextRow = currentRow + direction[0];
+            var nextCol = currentCol + direction[1];
+            if (nextRow >= 0 && nextRow < land.length) {
+                if (nextCol >= 0 && nextCol < land[nextRow].length) {
+                    if (land[nextRow][nextCol] === 1 &&
+                        visitedLand[nextRow][nextCol] == 0) {
+                        queue.push([nextRow, nextCol]);
+                        length++;
+                        visitedLand[nextRow][nextCol] = 1;
+                    }
                 }
-                endIndex += 1;
             }
-            // add the end index to the indices
-            indices.push(endIndex - 1);
-            // return the indices to the user
-            return indices;
-        }
-        else if (array[mid] < target) {
-            left = mid + 1;
-        }
-        else {
-            right = mid - 1;
-        }
+        });
+    };
+    while (queue.length) {
+        _loop_1();
     }
-    return [-1, -1];
+    return length;
 }
-function getTargetIndicesBS(array, target) {
-    if (array.length === 0)
-        return [-1, -1];
-    // binary search for an index that holds our target value -- may return -1 if the target isn't in the array
-    var firstPos = binarySearch(array, 0, array.length - 1, target);
-    if (firstPos === -1)
-        return [-1, -1];
-    var leftPointer = firstPos - 1;
-    var tempLeftPointer = leftPointer;
-    while (leftPointer >= 0 && array[leftPointer] === target) {
-        tempLeftPointer = leftPointer;
-        leftPointer = binarySearch(array, 0, leftPointer - 1, target);
-    }
-    if (leftPointer === -1) {
-        leftPointer = tempLeftPointer;
-    }
-    else {
-        leftPointer += 1;
-    }
-    var rightPointer = firstPos + 1;
-    var tempRightPointer = rightPointer;
-    while (rightPointer < array.length - 1 &&
-        array[rightPointer] === target &&
-        rightPointer >= 0) {
-        tempRightPointer = rightPointer;
-        rightPointer = binarySearch(array, rightPointer + 1, array.length - 1, target);
-    }
-    if (rightPointer === -1) {
-        rightPointer = tempRightPointer;
-    }
-    else {
-        rightPointer -= 1;
-    }
-    return [leftPointer, rightPointer];
-}
-function binarySearch(array, left, right, target) {
-    if (left > right) {
-        return -1;
-    }
-    var mid = Math.floor((left + right) / 2);
-    if (array[mid] === target) {
-        return mid;
-    }
-    else if (array[mid] < target) {
-        return binarySearch(array, mid + 1, right, target);
-    }
-    else {
-        return binarySearch(array, left, mid - 1, target);
-    }
-}
-console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 4)); // E: [7,7] G: [7,7]
-console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 3)); // E: [5,6] G: [5,6]
-console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 1)); // E: [0,2] G: [0,2]
-console.log(getTargetIndices([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 6)); // E: [9,10] G: [9,10]
-// the solution for left is off by one
-console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 1)); // E: [0,2] G: [0,2]
-console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 3)); // E: [5,6] G: [5,6]
-console.log(getTargetIndicesBS([1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 6], 4)); // E: [5,6] G: [5,6]
+console.log(riverSizes([
+    [0, 1, 1, 1, 0],
+    [0, 1, 0, 0],
+]));
+// Do not edit the line below.
+// exports.riverSizes = riverSizes;

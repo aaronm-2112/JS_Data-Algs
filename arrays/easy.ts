@@ -614,3 +614,78 @@ function wallsAndGatesDFS(
     wallsAndGatesDFS(grid, row + currentDir[0], col + currentDir[1], step++);
   }
 }
+
+// count the length of all rivers
+// array can be of different lengths
+
+function riverSizes(matrix: number[][]) {
+  // Write your code here.
+  const visitedLand = new Array();
+  for (let i = 0; i < matrix.length; i++) {
+    visitedLand.push(matrix[i].slice().fill(0));
+  }
+
+  const riverLengths = [];
+  for (let row = 0; row < matrix.length; row++) {
+    for (let col = 0; col < matrix[row].length; col++) {
+      if (matrix[row][col] === 1 && visitedLand[row][col] !== 1) {
+        let riverLength = getRiverLength(matrix, row, col, visitedLand);
+        riverLengths.push(riverLength);
+      }
+    }
+  }
+  return riverLengths;
+}
+
+function getRiverLength(
+  land: number[][],
+  row: number,
+  col: number,
+  visitedLand: number[][]
+) {
+  let length = 0;
+  let directions = [
+    [-1, 0],
+    [0, 1],
+    [1, 0],
+    [0, -1],
+  ];
+  let queue = [];
+  queue.push([row, col]);
+  length++;
+  visitedLand[row][col] = 1;
+
+  while (queue.length) {
+    let position = queue.pop();
+    let currentRow = position![0];
+    let currentCol = position![1];
+
+    directions.forEach((direction) => {
+      let nextRow = currentRow + direction[0];
+      let nextCol = currentCol + direction[1];
+
+      if (nextRow >= 0 && nextRow < land.length) {
+        if (nextCol >= 0 && nextCol < land[nextRow].length) {
+          if (
+            land[nextRow][nextCol] === 1 &&
+            visitedLand[nextRow][nextCol] == 0
+          ) {
+            queue.push([nextRow, nextCol]);
+            length++;
+            visitedLand[nextRow][nextCol] = 1;
+          }
+        }
+      }
+    });
+  }
+
+  return length;
+}
+
+// expect a length of 4
+console.log(
+  riverSizes([
+    [0, 1, 1, 1, 0],
+    [0, 1, 0, 0],
+  ])
+);
